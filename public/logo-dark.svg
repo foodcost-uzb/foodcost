@@ -1,0 +1,35 @@
+<svg viewBox="0 0 480 480" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5838a8" />
+      <stop offset="100%" stop-color="#c04880" />
+    </linearGradient>
+    <linearGradient id="g2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4060c0" />
+      <stop offset="100%" stop-color="#7a48b0" />
+    </linearGradient>
+    <linearGradient id="g3" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3070d0" />
+      <stop offset="100%" stop-color="#5040a0" />
+    </linearGradient>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c0e24" />
+      <stop offset="100%" stop-color="#140e30" />
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="448" height="448" rx="44" fill="url(#bg)" />
+  <rect x="34" y="34" width="412" height="412" rx="32" fill="none" stroke="url(#g3)" stroke-width="1" opacity="0.25" />
+  <rect x="52" y="52" width="376" height="376" rx="26" fill="none" stroke="url(#g2)" stroke-width="1.5" opacity="0.45" />
+  <rect x="70" y="70" width="340" height="340" rx="20" fill="none" stroke="url(#g1)" stroke-width="2.5" />
+  <g stroke="#e0e4f0" stroke-width="4.5" stroke-linecap="round" fill="none">
+    <line x1="128" y1="148" x2="128" y2="312" />
+    <line x1="128" y1="148" x2="218" y2="148" />
+    <line x1="128" y1="224" x2="195" y2="224" />
+  </g>
+  <path d="M 345 176 A 76 76 0 1 0 345 284" stroke="url(#g1)" stroke-width="4.5" stroke-linecap="round" fill="none" />
+  <circle cx="207" cy="348" r="2.5" fill="url(#g3)" opacity="0.35" />
+  <circle cx="232" cy="348" r="3.2" fill="url(#g2)" opacity="0.55" />
+  <circle cx="257" cy="348" r="4" fill="url(#g1)" />
+  <text x="240" y="379" text-anchor="middle" font-family="'Helvetica Neue','Arial',sans-serif" font-size="18" font-weight="300" fill="#5868a8" letter-spacing="13">FOOD COST</text>
+  <line x1="130" y1="392" x2="350" y2="392" stroke="url(#g1)" stroke-width="0.8" opacity="0.2" />
+</svg>
