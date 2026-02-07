@@ -11,6 +11,7 @@ import {
   Video,
   MessageSquare,
 } from "lucide-react";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 type TestimonialType = "text" | "video";
 
@@ -269,15 +270,25 @@ export default function NewTestimonialPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                    URL аватара
+                    Аватар
                   </label>
-                  <input
-                    type="url"
+                  <ImageUpload
                     value={form.avatar}
-                    onChange={(e) => updateField("avatar", e.target.value)}
-                    placeholder="https://example.com/avatar.jpg"
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5838a8]/20 focus:border-[#5838a8] transition-colors text-sm"
+                    onChange={(url) => updateField("avatar", url)}
+                    folder="testimonials"
                   />
+                  <div className="mt-2">
+                    <label className="block text-xs font-medium text-slate-400 mb-1">
+                      Или вставьте URL вручную
+                    </label>
+                    <input
+                      type="url"
+                      value={form.avatar}
+                      onChange={(e) => updateField("avatar", e.target.value)}
+                      placeholder="https://example.com/avatar.jpg"
+                      className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5838a8]/20 focus:border-[#5838a8] transition-colors text-sm"
+                    />
+                  </div>
                 </div>
               </>
             )}
@@ -373,15 +384,25 @@ export default function NewTestimonialPage() {
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                  URL превью (thumbnail)
+                  Превью (thumbnail)
                 </label>
-                <input
-                  type="url"
+                <ImageUpload
                   value={form.thumbnail}
-                  onChange={(e) => updateField("thumbnail", e.target.value)}
-                  placeholder="https://example.com/thumbnail.jpg"
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5838a8]/20 focus:border-[#5838a8] transition-colors text-sm"
+                  onChange={(url) => updateField("thumbnail", url)}
+                  folder="testimonials"
                 />
+                <div className="mt-2">
+                  <label className="block text-xs font-medium text-slate-400 mb-1">
+                    Или вставьте URL вручную
+                  </label>
+                  <input
+                    type="url"
+                    value={form.thumbnail}
+                    onChange={(e) => updateField("thumbnail", e.target.value)}
+                    placeholder="https://example.com/thumbnail.jpg"
+                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5838a8]/20 focus:border-[#5838a8] transition-colors text-sm"
+                  />
+                </div>
                 <p className="text-xs text-slate-400 mt-1">
                   Если не указать, будет использована стандартная заглушка
                 </p>
