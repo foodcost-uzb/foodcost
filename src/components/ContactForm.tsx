@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Send, Phone, Mail, MapPin, MessageCircle, Loader2 } from "lucide-react";
+import { Send, Phone, Mail, MapPin, Loader2 } from "lucide-react";
 
 interface ContactFormProps {
   settings?: Record<string, string>;
@@ -114,17 +114,6 @@ export default function ContactForm({ settings }: ContactFormProps) {
 
             {/* Social buttons */}
             <div className="flex gap-4 mt-8">
-              <motion.a
-                href={s.contact_whatsapp || "https://wa.me/998901234567"}
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-full font-medium hover:bg-green-600 transition-colors shadow-lg shadow-green-500/20"
-              >
-                <MessageCircle size={20} />
-                WhatsApp
-              </motion.a>
               <motion.a
                 href={s.contact_telegram || "https://t.me/foodcost"}
                 target="_blank"

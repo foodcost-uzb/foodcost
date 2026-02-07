@@ -1,7 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { TrendingUp, TrendingDown, ArrowUpRight } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { TrendingUp, TrendingDown, ArrowUpRight, X, ArrowRight } from "lucide-react";
 
 interface CaseResult {
   label: string;
@@ -30,7 +31,82 @@ const defaultCases: CaseData[] = [
 
 export default function Cases({ cases: casesProp }: CasesProps) {
   const cases = casesProp || defaultCases;
+  const [selectedCase, setSelectedCase] = useState<CaseData | null>(null);
+
   return (
+    <>
+    {/* Modal */}
+    <AnimatePresence>
+      {selectedCase && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          onClick={() => setSelectedCase(null)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ type: "spring", duration: 0.5 }}
+            className="relative bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setSelectedCase(null)}
+              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center transition-colors"
+            >
+              <X size={20} className="text-white" />
+            </button>
+
+            {/* Image */}
+            <div className="relative h-56 overflow-hidden rounded-t-3xl">
+              <img
+                src={selectedCase.image}
+                alt={selectedCase.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              <div className="absolute bottom-4 left-6 text-white">
+                <h3 className="text-2xl font-bold">{selectedCase.title}</h3>
+                <p className="text-sm text-white/80">{selectedCase.location}</p>
+              </div>
+            </div>
+
+            <div className="p-8">
+              <p className="text-slate-600 mb-6">{selectedCase.description}</p>
+
+              <h4 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">Результаты</h4>
+              <div className="grid grid-cols-1 gap-3 mb-8">
+                {selectedCase.results.map((result) => (
+                  <div
+                    key={result.label}
+                    className="flex items-center justify-between p-3 rounded-xl bg-slate-50"
+                  >
+                    <span className="text-slate-600">{result.label}</span>
+                    <span className={`flex items-center gap-1 font-bold text-lg ${
+                      result.positive ? "text-emerald-500" : "text-red-500"
+                    }`}>
+                      {result.positive ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
+                      {result.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <a
+                href="#contact"
+                onClick={() => setSelectedCase(null)}
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white py-4 rounded-xl font-semibold shadow-lg shadow-[#5838a8]/30 hover:shadow-xl transition-shadow"
+              >
+                Хочу такой же результат <ArrowRight size={18} />
+              </a>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
     <section id="cases" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -106,18 +182,19 @@ export default function Cases({ cases: casesProp }: CasesProps) {
                 </div>
 
                 {/* CTA */}
-                <a
-                  href="#contact"
+                <button
+                  onClick={() => setSelectedCase(item)}
                   className="mt-6 flex items-center gap-2 text-[#5838a8] font-medium group-hover:gap-3 transition-all"
                 >
                   Подробнее о проекте
                   <ArrowUpRight size={18} />
-                </a>
+                </button>
               </div>
             </motion.div>
           ))}
         </div>
       </div>
     </section>
+    </>
   );
 }

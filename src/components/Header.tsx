@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, MessageCircle } from "lucide-react";
+import { Menu, X, Phone, Send } from "lucide-react";
 import Link from "next/link";
 import Logo from "./Logo";
+import { useSettings } from "@/lib/SettingsContext";
 
 const navLinks = [
   { href: "#services", label: "Услуги" },
@@ -18,6 +19,7 @@ const navLinks = [
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const s = useSettings();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -64,22 +66,22 @@ export default function Header() {
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center gap-3">
             <a
-              href="tel:+998901234567"
+              href={`tel:${s.contact_phone || "+998901234567"}`}
               className="flex items-center gap-2 text-slate-600 hover:text-[#5838a8] transition-colors"
             >
               <Phone size={18} />
-              <span className="font-medium">+998 90 123 45 67</span>
+              <span className="font-medium">{s.contact_phone_display || "+998 90 123 45 67"}</span>
             </a>
             <motion.a
-              href="https://wa.me/998901234567"
+              href={s.contact_telegram || "https://t.me/foodcost"}
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="flex items-center gap-2 bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white px-5 py-2.5 rounded-full font-medium shadow-lg shadow-[#5838a8]/20 hover:shadow-xl hover:shadow-[#5838a8]/30 transition-shadow"
             >
-              <MessageCircle size={18} />
-              WhatsApp
+              <Send size={18} />
+              Telegram
             </motion.a>
           </div>
 
@@ -116,20 +118,20 @@ export default function Header() {
                 ))}
                 <div className="flex flex-col gap-3 pt-4 mt-2 border-t border-[#5838a8]/10">
                   <a
-                    href="tel:+998901234567"
+                    href={`tel:${s.contact_phone || "+998901234567"}`}
                     className="flex items-center gap-2 text-slate-600 py-2"
                   >
                     <Phone size={18} />
-                    +998 90 123 45 67
+                    {s.contact_phone_display || "+998 90 123 45 67"}
                   </a>
                   <a
-                    href="https://wa.me/998901234567"
+                    href={s.contact_telegram || "https://t.me/foodcost"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white px-4 py-3.5 rounded-full font-medium shadow-lg"
                   >
-                    <MessageCircle size={18} />
-                    WhatsApp
+                    <Send size={18} />
+                    Telegram
                   </a>
                 </div>
               </nav>

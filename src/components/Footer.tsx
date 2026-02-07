@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Phone, Mail, MapPin, Send, MessageCircle, Youtube, Headphones } from "lucide-react";
+import { Phone, Mail, MapPin, Send, Youtube, Headphones } from "lucide-react";
 import Logo from "./Logo";
 
 const footerLinks = {
@@ -48,15 +48,6 @@ export default function Footer({ settings }: FooterProps) {
               делая владельцев успешными и свободными.
             </p>
             <div className="flex gap-3">
-              <motion.a
-                href={s.contact_whatsapp || "https://wa.me/998901234567"}
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.1 }}
-                className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-green-600 transition-colors"
-              >
-                <MessageCircle size={20} />
-              </motion.a>
               <motion.a
                 href={s.contact_telegram || "https://t.me/foodcost"}
                 target="_blank"

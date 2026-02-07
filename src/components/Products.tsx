@@ -1,7 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { CheckCircle2, ArrowRight, Sparkles, Zap, Crown, type LucideIcon } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { CheckCircle2, ArrowRight, Sparkles, Zap, Crown, X, type LucideIcon } from "lucide-react";
 
 const iconMap: Record<string, LucideIcon> = { Zap, Sparkles, Crown };
 
@@ -31,7 +32,73 @@ const defaultProducts: ProductData[] = [
 
 export default function Products({ products: productsProp }: ProductsProps) {
   const products = productsProp || defaultProducts;
+  const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(null);
+
   return (
+    <>
+    {/* Modal */}
+    <AnimatePresence>
+      {selectedProduct && (() => {
+        const ModalIcon = iconMap[selectedProduct.icon] || Zap;
+        return (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={() => setSelectedProduct(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", duration: 0.5 }}
+              className="relative bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-8 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setSelectedProduct(null)}
+                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
+              >
+                <X size={20} className="text-slate-600" />
+              </button>
+
+              {selectedProduct.is_popular && (
+                <span className="inline-block bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white text-xs font-semibold px-3 py-1 rounded-full mb-4">
+                  Популярный выбор
+                </span>
+              )}
+
+              <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${selectedProduct.color} flex items-center justify-center mb-6`}>
+                <ModalIcon className="w-7 h-7 text-white" />
+              </div>
+
+              <h3 className="text-2xl font-bold text-slate-900 mb-1">{selectedProduct.name}</h3>
+              <p className="text-[#5838a8] font-medium mb-4">{selectedProduct.tagline}</p>
+              <p className="text-slate-600 mb-6">{selectedProduct.description}</p>
+
+              <h4 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-3">Что включено</h4>
+              <ul className="space-y-3 mb-8">
+                {selectedProduct.features.map((feature) => (
+                  <li key={feature} className="flex items-center gap-3 text-slate-600">
+                    <CheckCircle2 className="w-5 h-5 text-[#5838a8] flex-shrink-0" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+
+              <a
+                href="#contact"
+                onClick={() => setSelectedProduct(null)}
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white py-4 rounded-xl font-semibold shadow-lg shadow-[#5838a8]/30 hover:shadow-xl transition-shadow"
+              >
+                Оставить заявку <ArrowRight size={18} />
+              </a>
+            </motion.div>
+          </motion.div>
+        );
+      })()}
+    </AnimatePresence>
     <section id="products" className="py-24 bg-gradient-to-b from-white to-[#f8f7fc]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -115,10 +182,11 @@ export default function Products({ products: productsProp }: ProductsProps) {
               </ul>
 
               {/* CTA */}
-              <motion.a
-                href="#contact"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <motion.button
+                whileHover={!product.badge ? { scale: 1.02 } : undefined}
+                whileTap={!product.badge ? { scale: 0.98 } : undefined}
+                onClick={() => !product.badge && setSelectedProduct(product)}
+                disabled={!!product.badge}
                 className={`w-full flex items-center justify-center gap-2 py-4 rounded-xl font-semibold transition-all ${
                   product.is_popular
                     ? "bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white shadow-lg shadow-[#5838a8]/30"
@@ -129,7 +197,7 @@ export default function Products({ products: productsProp }: ProductsProps) {
               >
                 {product.badge ? "Скоро доступно" : "Узнать подробнее"}
                 {!product.badge && <ArrowRight size={18} />}
-              </motion.a>
+              </motion.button>
             </motion.div>
             );
           })}
@@ -147,5 +215,6 @@ export default function Products({ products: productsProp }: ProductsProps) {
         </motion.p>
       </div>
     </section>
+    </>
   );
 }

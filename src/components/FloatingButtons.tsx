@@ -1,13 +1,27 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { MessageCircle, Phone, ArrowUp, PhoneCall } from "lucide-react";
+import { Send, Phone, ArrowUp, PhoneCall } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useSettings } from "@/lib/SettingsContext";
 import CallbackModal from "./CallbackModal";
+
+const wobble = {
+  animate: {
+    rotate: [0, -6, 6, -4, 4, -2, 2, 0],
+    transition: {
+      duration: 1.5,
+      repeat: Infinity,
+      repeatDelay: 3,
+      ease: "easeInOut" as const,
+    },
+  },
+};
 
 export default function FloatingButtons() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isCallbackOpen, setIsCallbackOpen] = useState(false);
+  const s = useSettings();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,6 +54,8 @@ export default function FloatingButtons() {
         {/* Callback */}
         <motion.button
           onClick={() => setIsCallbackOpen(true)}
+          variants={wobble}
+          animate="animate"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           className="w-14 h-14 bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white rounded-full shadow-lg shadow-[#5838a8]/30 flex items-center justify-center hover:shadow-xl transition-shadow"
@@ -49,7 +65,9 @@ export default function FloatingButtons() {
 
         {/* Phone */}
         <motion.a
-          href="tel:+998901234567"
+          href={`tel:${s.contact_phone || "+998901234567"}`}
+          variants={wobble}
+          animate="animate"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           className="w-14 h-14 bg-[#5838a8] text-white rounded-full shadow-lg shadow-[#5838a8]/30 flex items-center justify-center hover:bg-[#7c5cc9] transition-colors"
@@ -57,16 +75,18 @@ export default function FloatingButtons() {
           <Phone size={24} />
         </motion.a>
 
-        {/* WhatsApp */}
+        {/* Telegram */}
         <motion.a
-          href="https://wa.me/998901234567"
+          href={s.contact_telegram || "https://t.me/foodcost"}
           target="_blank"
           rel="noopener noreferrer"
+          variants={wobble}
+          animate="animate"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="w-14 h-14 bg-green-500 text-white rounded-full shadow-lg shadow-green-500/30 flex items-center justify-center hover:bg-green-600 transition-colors animate-pulse-glow"
+          className="w-14 h-14 bg-blue-500 text-white rounded-full shadow-lg shadow-blue-500/30 flex items-center justify-center hover:bg-blue-600 transition-colors animate-pulse-glow"
         >
-          <MessageCircle size={24} />
+          <Send size={24} />
         </motion.a>
       </div>
 

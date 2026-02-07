@@ -80,7 +80,6 @@ INSERT INTO site_settings (key, value, "group", label, type) VALUES
 ('contact_phone_display', '+998 90 123 45 67', 'contacts', 'Телефон (отображение)', 'text'),
 ('contact_email', 'info@foodcost.uz', 'contacts', 'Email', 'email'),
 ('contact_address', 'Ташкент, Узбекистан', 'contacts', 'Адрес', 'text'),
-('contact_whatsapp', 'https://wa.me/998901234567', 'contacts', 'WhatsApp', 'url'),
 ('contact_telegram', 'https://t.me/foodcost', 'contacts', 'Telegram', 'url'),
 ('contact_youtube', 'https://www.youtube.com/@FoodCostGroup', 'contacts', 'YouTube', 'url'),
 

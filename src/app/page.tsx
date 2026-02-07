@@ -37,7 +37,7 @@ export default async function Home() {
   const settingsMap = settings || {};
 
   return (
-    <SettingsProvider settings={settingsMap as Record<string, string> & { contact_phone: string; contact_phone_display: string; contact_email: string; contact_address: string; contact_whatsapp: string; contact_telegram: string; contact_youtube: string; podcast_title: string; podcast_description: string; podcast_video_id: string; podcast_youtube_url: string }}>
+    <SettingsProvider settings={settingsMap as Record<string, string> & { contact_phone: string; contact_phone_display: string; contact_email: string; contact_address: string; contact_telegram: string; contact_youtube: string; podcast_title: string; podcast_description: string; podcast_video_id: string; podcast_youtube_url: string }}>
       <main className="min-h-screen">
         <Header />
         <Hero settings={settingsMap} />

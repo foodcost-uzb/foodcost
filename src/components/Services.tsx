@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ClipboardCheck,
   Settings,
@@ -9,6 +10,7 @@ import {
   HeadphonesIcon,
   ArrowRight,
   CheckCircle2,
+  X,
   type LucideIcon
 } from "lucide-react";
 
@@ -45,7 +47,67 @@ const defaultServices: ServiceData[] = [
 
 export default function Services({ services: servicesProp }: ServicesProps) {
   const services = servicesProp || defaultServices;
+  const [selectedService, setSelectedService] = useState<ServiceData | null>(null);
+
   return (
+    <>
+    {/* Modal */}
+    <AnimatePresence>
+      {selectedService && (() => {
+        const ModalIcon = iconMap[selectedService.icon] || ClipboardCheck;
+        return (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={() => setSelectedService(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", duration: 0.5 }}
+              className="relative bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-8 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setSelectedService(null)}
+                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
+              >
+                <X size={20} className="text-slate-600" />
+              </button>
+
+              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${selectedService.color} flex items-center justify-center mb-6`}>
+                <ModalIcon className="w-8 h-8 text-white" />
+              </div>
+
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">{selectedService.title}</h3>
+              <p className="text-[#5838a8] font-medium mb-4">{selectedService.short_desc}</p>
+              <p className="text-slate-600 mb-6">{selectedService.description}</p>
+
+              <h4 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-3">Что входит</h4>
+              <ul className="space-y-3 mb-8">
+                {selectedService.features.map((feature) => (
+                  <li key={feature} className="flex items-center gap-3 text-slate-600">
+                    <CheckCircle2 className="w-5 h-5 text-[#5838a8] flex-shrink-0" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+
+              <a
+                href="#contact"
+                onClick={() => setSelectedService(null)}
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white py-4 rounded-xl font-semibold shadow-lg shadow-[#5838a8]/30 hover:shadow-xl transition-shadow"
+              >
+                Оставить заявку <ArrowRight size={18} />
+              </a>
+            </motion.div>
+          </motion.div>
+        );
+      })()}
+    </AnimatePresence>
     <section id="services" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -107,12 +169,12 @@ export default function Services({ services: servicesProp }: ServicesProps) {
               </ul>
 
               {/* CTA */}
-              <a
-                href="#contact"
+              <button
+                onClick={() => setSelectedService(service)}
                 className="inline-flex items-center gap-2 text-[#5838a8] font-medium group-hover:gap-3 transition-all"
               >
                 Подробнее <ArrowRight size={16} />
-              </a>
+              </button>
 
               {/* Gradient border on hover */}
               <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
@@ -146,5 +208,6 @@ export default function Services({ services: servicesProp }: ServicesProps) {
         </motion.div>
       </div>
     </section>
+    </>
   );
 }
