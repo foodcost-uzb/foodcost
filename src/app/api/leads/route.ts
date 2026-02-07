@@ -39,5 +39,28 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Send Telegram notification (non-blocking)
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (botToken && chatId) {
+    const sourceLabel = source === 'callback' ? 'Обратный звонок' : source === 'calculator' ? 'Калькулятор' : 'Форма';
+    const text = [
+      `📩 <b>Новая заявка с сайта</b>`,
+      ``,
+      `👤 <b>Имя:</b> ${name}`,
+      `📞 <b>Телефон:</b> ${phone}`,
+      email ? `📧 <b>Email:</b> ${email}` : null,
+      message ? `💬 <b>Сообщение:</b> ${message}` : null,
+      `📋 <b>Источник:</b> ${sourceLabel}`,
+    ].filter(Boolean).join('\n');
+
+    fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML' }),
+    }).catch(() => {});
+  }
+
   return NextResponse.json(data, { status: 201 });
 }
