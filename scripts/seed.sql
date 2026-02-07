@@ -5,7 +5,7 @@
 -- Admin user (password: admin123 — change in production!)
 -- bcrypt hash of 'admin123'
 INSERT INTO admin_users (username, password_hash) VALUES
-('admin', '$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu9.m');
+('admin', '$2b$10$tO140s2uEuX0TX22T1r7r.EP6xAAjxr5m8BcNaU92z/FuFuyRzxuG');
 
 -- =============================================
 -- Services
