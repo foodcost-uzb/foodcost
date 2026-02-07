@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseClient, getSupabaseAdmin } from '@/lib/supabase/server';
+import { getSupabaseAdmin } from '@/lib/supabase/server';
 import { verifyAdmin } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Name and phone are required' }, { status: 400 });
   }
 
-  const supabase = getSupabaseClient();
+  const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from('leads')
     .insert({ name, phone, email: email || null, message: message || null, source: source || 'form' })

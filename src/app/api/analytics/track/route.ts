@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseClient } from '@/lib/supabase/server';
+import { getSupabaseAdmin } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
   const { type, page, event_name, event_data, session_id } = body;
 
-  const supabase = getSupabaseClient();
+  const supabase = getSupabaseAdmin();
 
   if (type === 'pageview') {
     const { error } = await supabase.from('page_views').insert({
