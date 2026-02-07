@@ -3,6 +3,22 @@ import { getSupabaseAdmin } from '@/lib/supabase/server';
 import { verifyAdmin } from '@/lib/auth';
 import { revalidateTag } from 'next/cache';
 
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const admin = await verifyAdmin();
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const { id } = await params;
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 404 });
+  return NextResponse.json(data);
+}
+
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const admin = await verifyAdmin();
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

@@ -42,6 +42,7 @@ export default function EditProductPage({
 
   const [name, setName] = useState("");
   const [tagline, setTagline] = useState("");
+  const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [icon, setIcon] = useState("Zap");
   const [features, setFeatures] = useState<string[]>([""]);
@@ -58,19 +59,14 @@ export default function EditProductPage({
       try {
         setLoading(true);
         setError("");
-        const res = await fetch("/api/content/products");
+        const res = await fetch(`/api/content/products/${id}`);
         if (!res.ok) throw new Error("Ошибка загрузки продукта");
-        const products: Product[] = await res.json();
-        const product = products.find((p) => p.id === id);
-
-        if (!product) {
-          setError("Продукт не найден");
-          setLoading(false);
-          return;
-        }
+        const product: Product = await res.json();
 
         setName(product.name);
-        setTagline(product.tagline);
+        const taglineParts = product.tagline.split('|');
+        setTagline(taglineParts[0].trim());
+        setPrice(taglineParts[1]?.trim() || "");
         setDescription(product.description);
         setIcon(product.icon);
         setFeatures(
@@ -119,7 +115,7 @@ export default function EditProductPage({
 
       const body = {
         name: name.trim(),
-        tagline: tagline.trim(),
+        tagline: price.trim() ? `${tagline.trim()}|${price.trim()}` : tagline.trim(),
         description: description.trim(),
         icon,
         features: filteredFeatures,
@@ -245,6 +241,22 @@ export default function EditProductPage({
                 placeholder="Краткое описание тарифа"
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#5838a8] focus:border-transparent outline-none"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Стоимость
+              </label>
+              <input
+                type="text"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="Например: от 2 000 000 сум"
+                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#5838a8] focus:border-transparent outline-none"
+              />
+              <p className="text-xs text-slate-400 mt-1">
+                Отображается на карточке продукта. Оставьте пустым, если не нужно.
+              </p>
             </div>
 
             <div>

@@ -20,6 +20,7 @@ export default function NewProductPage() {
 
   const [name, setName] = useState("");
   const [tagline, setTagline] = useState("");
+  const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [icon, setIcon] = useState("Zap");
   const [features, setFeatures] = useState<string[]>([""]);
@@ -55,7 +56,7 @@ export default function NewProductPage() {
 
       const body = {
         name: name.trim(),
-        tagline: tagline.trim(),
+        tagline: price.trim() ? `${tagline.trim()}|${price.trim()}` : tagline.trim(),
         description: description.trim(),
         icon,
         features: filteredFeatures,
@@ -144,6 +145,22 @@ export default function NewProductPage() {
                 placeholder="Краткое описание тарифа"
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#5838a8] focus:border-transparent outline-none"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Стоимость
+              </label>
+              <input
+                type="text"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="Например: от 2 000 000 сум"
+                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#5838a8] focus:border-transparent outline-none"
+              />
+              <p className="text-xs text-slate-400 mt-1">
+                Отображается на карточке продукта. Оставьте пустым, если не нужно.
+              </p>
             </div>
 
             <div>

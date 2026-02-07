@@ -24,10 +24,18 @@ interface ProductsProps {
   products?: ProductData[];
 }
 
+function parseTagline(tagline: string): { tagline: string; price: string | null } {
+  const parts = tagline.split('|');
+  return {
+    tagline: parts[0].trim(),
+    price: parts[1]?.trim() || null,
+  };
+}
+
 const defaultProducts: ProductData[] = [
-  { id: "1", name: "BASE CONTROL", tagline: "Базовый контроль и отчётность", description: "Идеальный старт для тех, кто хочет навести порядок в учёте и получать регулярные отчёты о состоянии бизнеса.", icon: "Zap", features: ["Ежемесячные отчёты по food cost", "Контроль остатков", "Базовая аналитика", "Консультации по запросу", "Telegram-поддержка"], is_popular: false, badge: null, color: "from-slate-600 to-slate-700", bg_color: "bg-slate-50", border_color: "border-slate-200" },
-  { id: "2", name: "PRO CONTROL", tagline: "Углублённый учёт + аналитика", description: "Для тех, кто серьёзно относится к контролю. Полный цикл управления учётом с глубокой аналитикой.", icon: "Sparkles", features: ["Всё из BASE CONTROL", "Еженедельная аналитика", "Контроль отклонений", "Работа с поставщиками", "Оптимизация закупок", "Приоритетная поддержка", "Ежемесячные встречи"], is_popular: true, badge: null, color: "from-[#5838a8] to-[#c04880]", bg_color: "bg-gradient-to-br from-[#5838a8]/5 to-[#c04880]/5", border_color: "border-[#5838a8]/20" },
-  { id: "3", name: "CONTROL HUB", tagline: "Цифровая платформа контроля", description: "Наша собственная платформа для автоматизированного контроля всех процессов в реальном времени.", icon: "Crown", features: ["Всё из PRO CONTROL", "Доступ к платформе 24/7", "Дашборды в реальном времени", "Автоматические уведомления", "API-интеграции", "Кастомные отчёты", "Персональный менеджер", "SLA 99.9%"], is_popular: false, badge: "Скоро", color: "from-amber-500 to-orange-500", bg_color: "bg-amber-50", border_color: "border-amber-200" },
+  { id: "1", name: "BASE CONTROL", tagline: "Базовый контроль и отчётность|от 2 000 000 сум", description: "Идеальный старт для тех, кто хочет навести порядок в учёте и получать регулярные отчёты о состоянии бизнеса.", icon: "Zap", features: ["Ежемесячные отчёты по food cost", "Контроль остатков", "Базовая аналитика", "Консультации по запросу", "Telegram-поддержка"], is_popular: false, badge: null, color: "from-slate-600 to-slate-700", bg_color: "bg-slate-50", border_color: "border-slate-200" },
+  { id: "2", name: "PRO CONTROL", tagline: "Углублённый учёт + аналитика|от 5 000 000 сум", description: "Для тех, кто серьёзно относится к контролю. Полный цикл управления учётом с глубокой аналитикой.", icon: "Sparkles", features: ["Всё из BASE CONTROL", "Еженедельная аналитика", "Контроль отклонений", "Работа с поставщиками", "Оптимизация закупок", "Приоритетная поддержка", "Ежемесячные встречи"], is_popular: true, badge: null, color: "from-[#5838a8] to-[#c04880]", bg_color: "bg-gradient-to-br from-[#5838a8]/5 to-[#c04880]/5", border_color: "border-[#5838a8]/20" },
+  { id: "3", name: "CONTROL HUB", tagline: "Цифровая платформа контроля|Договорная", description: "Наша собственная платформа для автоматизированного контроля всех процессов в реальном времени.", icon: "Crown", features: ["Всё из PRO CONTROL", "Доступ к платформе 24/7", "Дашборды в реальном времени", "Автоматические уведомления", "API-интеграции", "Кастомные отчёты", "Персональный менеджер", "SLA 99.9%"], is_popular: false, badge: "Скоро", color: "from-amber-500 to-orange-500", bg_color: "bg-amber-50", border_color: "border-amber-200" },
 ];
 
 export default function Products({ products: productsProp }: ProductsProps) {
@@ -40,6 +48,7 @@ export default function Products({ products: productsProp }: ProductsProps) {
     <AnimatePresence>
       {selectedProduct && (() => {
         const ModalIcon = iconMap[selectedProduct.icon] || Zap;
+        const { tagline, price } = parseTagline(selectedProduct.tagline);
         return (
           <motion.div
             initial={{ opacity: 0 }}
@@ -74,7 +83,12 @@ export default function Products({ products: productsProp }: ProductsProps) {
               </div>
 
               <h3 className="text-2xl font-bold text-slate-900 mb-1">{selectedProduct.name}</h3>
-              <p className="text-[#5838a8] font-medium mb-4">{selectedProduct.tagline}</p>
+              <p className="text-[#5838a8] font-medium mb-2">{tagline}</p>
+
+              {price && (
+                <p className="text-2xl font-bold text-slate-900 mb-4">{price}</p>
+              )}
+
               <p className="text-slate-600 mb-6">{selectedProduct.description}</p>
 
               <h4 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-3">Что включено</h4>
@@ -124,6 +138,7 @@ export default function Products({ products: productsProp }: ProductsProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {products.map((product, index) => {
             const IconComponent = iconMap[product.icon] || Zap;
+            const { tagline, price } = parseTagline(product.tagline);
             return (
             <motion.div
               key={product.id || product.name}
@@ -162,9 +177,17 @@ export default function Products({ products: productsProp }: ProductsProps) {
               <h3 className="text-2xl font-bold text-slate-900 mb-1">
                 {product.name}
               </h3>
-              <p className={`font-medium mb-4 ${product.is_popular ? "text-[#5838a8]" : "text-slate-500"}`}>
-                {product.tagline}
+              <p className={`font-medium mb-2 ${product.is_popular ? "text-[#5838a8]" : "text-slate-500"}`}>
+                {tagline}
               </p>
+
+              {/* Price */}
+              {price && (
+                <p className={`text-2xl font-bold mb-4 ${product.is_popular ? "text-[#5838a8]" : "text-slate-900"}`}>
+                  {price}
+                </p>
+              )}
+
               <p className="text-slate-600 mb-6">
                 {product.description}
               </p>
