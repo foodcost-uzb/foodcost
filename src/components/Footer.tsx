@@ -27,7 +27,12 @@ const footerLinks = {
   ],
 };
 
-export default function Footer() {
+interface FooterProps {
+  settings?: Record<string, string>;
+}
+
+export default function Footer({ settings }: FooterProps) {
+  const s = settings || {};
   return (
     <footer className="bg-[#1a1a2e] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -44,7 +49,7 @@ export default function Footer() {
             </p>
             <div className="flex gap-3">
               <motion.a
-                href="https://wa.me/998901234567"
+                href={s.contact_whatsapp || "https://wa.me/998901234567"}
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}
@@ -53,7 +58,7 @@ export default function Footer() {
                 <MessageCircle size={20} />
               </motion.a>
               <motion.a
-                href="https://t.me/foodcost"
+                href={s.contact_telegram || "https://t.me/foodcost"}
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}
@@ -62,7 +67,7 @@ export default function Footer() {
                 <Send size={20} />
               </motion.a>
               <motion.a
-                href="https://www.youtube.com/@FoodCostGroup"
+                href={s.contact_youtube || "https://www.youtube.com/@FoodCostGroup"}
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}
@@ -133,26 +138,26 @@ export default function Footer() {
             <ul className="space-y-4">
               <li>
                 <a
-                  href="tel:+998901234567"
+                  href={`tel:${s.contact_phone || "+998901234567"}`}
                   className="flex items-center gap-3 text-slate-400 hover:text-[#c04880] transition-colors"
                 >
                   <Phone size={18} />
-                  +998 90 123 45 67
+                  {s.contact_phone_display || "+998 90 123 45 67"}
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:info@foodcost.uz"
+                  href={`mailto:${s.contact_email || "info@foodcost.uz"}`}
                   className="flex items-center gap-3 text-slate-400 hover:text-[#c04880] transition-colors"
                 >
                   <Mail size={18} />
-                  info@foodcost.uz
+                  {s.contact_email || "info@foodcost.uz"}
                 </a>
               </li>
               <li>
                 <div className="flex items-center gap-3 text-slate-400">
                   <MapPin size={18} />
-                  Ташкент, Узбекистан
+                  {s.contact_address || "Ташкент, Узбекистан"}
                 </div>
               </li>
             </ul>

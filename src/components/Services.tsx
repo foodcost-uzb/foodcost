@@ -8,78 +8,43 @@ import {
   GraduationCap,
   HeadphonesIcon,
   ArrowRight,
-  CheckCircle2
+  CheckCircle2,
+  type LucideIcon
 } from "lucide-react";
 
-const services = [
-  {
-    icon: ClipboardCheck,
-    title: "Аудит",
-    shortDesc: "Полная диагностика учёта",
-    description: "Комплексная проверка всех процессов учёта на предприятии. Выявляем слабые места, потери и зоны роста.",
-    features: [
-      "Анализ текущих процессов",
-      "Выявление потерь и хищений",
-      "Проверка документооборота",
-      "Рекомендации по оптимизации"
-    ],
-    color: "from-[#5838a8] to-[#7c5cc9]",
-  },
-  {
-    icon: Settings,
-    title: "Настройка",
-    shortDesc: "Внедрение iiko и систем учёта",
-    description: "Профессиональная настройка систем автоматизации: iiko, справочники, ТТК, калькуляционные карты.",
-    features: [
-      "Настройка iiko с нуля",
-      "Создание справочников",
-      "Разработка ТТК",
-      "Настройка отчётности"
-    ],
-    color: "from-[#6b4fad] to-[#9b6fb3]",
-  },
-  {
-    icon: Rocket,
-    title: "Внедрение",
-    shortDesc: "Запуск учёта с нуля",
-    description: "Полный цикл внедрения товарного и финансового учёта. От нуля до работающей системы.",
-    features: [
-      "Товарный учёт",
-      "Финансовый учёт",
-      "Складская логистика",
-      "Интеграции с поставщиками"
-    ],
-    color: "from-[#8560b5] to-[#b278b8]",
-  },
-  {
-    icon: GraduationCap,
-    title: "Обучение",
-    shortDesc: "Тренинги для команды",
-    description: "Практические тренинги для вашей команды по работе с системами учёта и контроля.",
-    features: [
-      "Работа с iiko",
-      "Инвентаризации",
-      "Работа с отчётами",
-      "Контроль себестоимости"
-    ],
-    color: "from-[#9e71bc] to-[#c487be]",
-  },
-  {
-    icon: HeadphonesIcon,
-    title: "Сопровождение",
-    shortDesc: "Ежемесячное ведение учёта",
-    description: "Постоянная поддержка и ведение учёта на аутсорсинге. Пакеты BASE и PRO CONTROL.",
-    features: [
-      "Ежедневный контроль",
-      "Еженедельные отчёты",
-      "Оперативная поддержка",
-      "Анализ показателей"
-    ],
-    color: "from-[#b782c0] to-[#c04880]",
-  },
+const iconMap: Record<string, LucideIcon> = {
+  ClipboardCheck,
+  Settings,
+  Rocket,
+  GraduationCap,
+  HeadphonesIcon,
+};
+
+interface ServiceData {
+  id: string;
+  icon: string;
+  title: string;
+  short_desc: string;
+  description: string;
+  features: string[];
+  color: string;
+  sort_order: number;
+}
+
+interface ServicesProps {
+  services?: ServiceData[];
+}
+
+const defaultServices: ServiceData[] = [
+  { id: "1", icon: "ClipboardCheck", title: "Аудит", short_desc: "Полная диагностика учёта", description: "Комплексная проверка всех процессов учёта на предприятии. Выявляем слабые места, потери и зоны роста.", features: ["Анализ текущих процессов", "Выявление потерь и хищений", "Проверка документооборота", "Рекомендации по оптимизации"], color: "from-[#5838a8] to-[#7c5cc9]", sort_order: 1 },
+  { id: "2", icon: "Settings", title: "Настройка", short_desc: "Внедрение iiko и систем учёта", description: "Профессиональная настройка систем автоматизации: iiko, справочники, ТТК, калькуляционные карты.", features: ["Настройка iiko с нуля", "Создание справочников", "Разработка ТТК", "Настройка отчётности"], color: "from-[#6b4fad] to-[#9b6fb3]", sort_order: 2 },
+  { id: "3", icon: "Rocket", title: "Внедрение", short_desc: "Запуск учёта с нуля", description: "Полный цикл внедрения товарного и финансового учёта. От нуля до работающей системы.", features: ["Товарный учёт", "Финансовый учёт", "Складская логистика", "Интеграции с поставщиками"], color: "from-[#8560b5] to-[#b278b8]", sort_order: 3 },
+  { id: "4", icon: "GraduationCap", title: "Обучение", short_desc: "Тренинги для команды", description: "Практические тренинги для вашей команды по работе с системами учёта и контроля.", features: ["Работа с iiko", "Инвентаризации", "Работа с отчётами", "Контроль себестоимости"], color: "from-[#9e71bc] to-[#c487be]", sort_order: 4 },
+  { id: "5", icon: "HeadphonesIcon", title: "Сопровождение", short_desc: "Ежемесячное ведение учёта", description: "Постоянная поддержка и ведение учёта на аутсорсинге. Пакеты BASE и PRO CONTROL.", features: ["Ежедневный контроль", "Еженедельные отчёты", "Оперативная поддержка", "Анализ показателей"], color: "from-[#b782c0] to-[#c04880]", sort_order: 5 },
 ];
 
-export default function Services() {
+export default function Services({ services: servicesProp }: ServicesProps) {
+  const services = servicesProp || defaultServices;
   return (
     <section id="services" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -104,9 +69,11 @@ export default function Services() {
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service, index) => (
+          {services.map((service, index) => {
+            const IconComponent = iconMap[service.icon] || ClipboardCheck;
+            return (
             <motion.div
-              key={service.title}
+              key={service.id || service.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -115,7 +82,7 @@ export default function Services() {
             >
               {/* Icon */}
               <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${service.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                <service.icon className="w-8 h-8 text-white" />
+                <IconComponent className="w-8 h-8 text-white" />
               </div>
 
               {/* Content */}
@@ -123,7 +90,7 @@ export default function Services() {
                 {service.title}
               </h3>
               <p className="text-[#5838a8] font-medium mb-3">
-                {service.shortDesc}
+                {service.short_desc}
               </p>
               <p className="text-slate-600 mb-6">
                 {service.description}
@@ -152,7 +119,8 @@ export default function Services() {
                 <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#5838a8]/5 to-[#c04880]/5" />
               </div>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Bottom CTA */}

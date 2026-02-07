@@ -3,7 +3,12 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Users, Award, Zap } from "lucide-react";
 
-export default function Hero() {
+interface HeroProps {
+  settings?: Record<string, string>;
+}
+
+export default function Hero({ settings }: HeroProps) {
+  const s = settings || {};
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-[#f8f7fc] to-white pt-20">
       {/* Background decoration */}
@@ -26,7 +31,7 @@ export default function Hero() {
             className="inline-flex items-center gap-2 bg-gradient-to-r from-[#5838a8]/10 to-[#c04880]/10 text-[#5838a8] px-5 py-2.5 rounded-full text-sm font-semibold mb-8 border border-[#5838a8]/20"
           >
             <span className="w-2 h-2 bg-gradient-to-r from-[#5838a8] to-[#c04880] rounded-full animate-pulse" />
-            50+ лет общего стажа команды в HoReCa
+            {s.hero_badge || "50+ лет общего стажа команды в HoReCa"}
           </motion.div>
 
           {/* Main heading */}
@@ -36,10 +41,10 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-slate-900 mb-6 leading-tight"
           >
-            Избавьте ваш бизнес
+            {s.hero_title_1 || "Избавьте ваш бизнес"}
             <br />
             от{" "}
-            <span className="gradient-text">хаоса в управлении</span>
+            <span className="gradient-text">{s.hero_title_2 || "хаоса в управлении"}</span>
           </motion.h1>
 
           {/* Mission subtitle */}
@@ -49,7 +54,7 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto"
           >
-            Делаем владельцев ресторанов успешными и свободными через системный учёт и контроль
+            {s.hero_subtitle || "Делаем владельцев ресторанов успешными и свободными через системный учёт и контроль"}
           </motion.p>
 
           {/* CTA Buttons */}
@@ -86,9 +91,9 @@ export default function Hero() {
             className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto"
           >
             {[
-              { icon: Users, value: "50+", label: "Лет общего стажа команды" },
-              { icon: Award, value: "100+", label: "Успешных проектов" },
-              { icon: Zap, value: "24/7", label: "Поддержка клиентов" },
+              { icon: Users, value: s.hero_stat_1_value || "50+", label: s.hero_stat_1_label || "Лет общего стажа команды" },
+              { icon: Award, value: s.hero_stat_2_value || "100+", label: s.hero_stat_2_label || "Успешных проектов" },
+              { icon: Zap, value: s.hero_stat_3_value || "24/7", label: s.hero_stat_3_label || "Поддержка клиентов" },
             ].map((stat, index) => (
               <motion.div
                 key={stat.label}

@@ -1,69 +1,36 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckCircle2, ArrowRight, Sparkles, Zap, Crown } from "lucide-react";
+import { CheckCircle2, ArrowRight, Sparkles, Zap, Crown, type LucideIcon } from "lucide-react";
 
-const products = [
-  {
-    name: "BASE CONTROL",
-    tagline: "Базовый контроль и отчётность",
-    description: "Идеальный старт для тех, кто хочет навести порядок в учёте и получать регулярные отчёты о состоянии бизнеса.",
-    icon: Zap,
-    features: [
-      "Ежемесячные отчёты по food cost",
-      "Контроль остатков",
-      "Базовая аналитика",
-      "Консультации по запросу",
-      "Telegram-поддержка",
-    ],
-    popular: false,
-    color: "from-slate-600 to-slate-700",
-    bgColor: "bg-slate-50",
-    borderColor: "border-slate-200",
-  },
-  {
-    name: "PRO CONTROL",
-    tagline: "Углублённый учёт + аналитика",
-    description: "Для тех, кто серьёзно относится к контролю. Полный цикл управления учётом с глубокой аналитикой.",
-    icon: Sparkles,
-    features: [
-      "Всё из BASE CONTROL",
-      "Еженедельная аналитика",
-      "Контроль отклонений",
-      "Работа с поставщиками",
-      "Оптимизация закупок",
-      "Приоритетная поддержка",
-      "Ежемесячные встречи",
-    ],
-    popular: true,
-    color: "from-[#5838a8] to-[#c04880]",
-    bgColor: "bg-gradient-to-br from-[#5838a8]/5 to-[#c04880]/5",
-    borderColor: "border-[#5838a8]/20",
-  },
-  {
-    name: "CONTROL HUB",
-    tagline: "Цифровая платформа контроля",
-    description: "Наша собственная платформа для автоматизированного контроля всех процессов в реальном времени.",
-    icon: Crown,
-    features: [
-      "Всё из PRO CONTROL",
-      "Доступ к платформе 24/7",
-      "Дашборды в реальном времени",
-      "Автоматические уведомления",
-      "API-интеграции",
-      "Кастомные отчёты",
-      "Персональный менеджер",
-      "SLA 99.9%",
-    ],
-    popular: false,
-    color: "from-amber-500 to-orange-500",
-    bgColor: "bg-amber-50",
-    borderColor: "border-amber-200",
-    badge: "Скоро",
-  },
+const iconMap: Record<string, LucideIcon> = { Zap, Sparkles, Crown };
+
+interface ProductData {
+  id: string;
+  name: string;
+  tagline: string;
+  description: string;
+  icon: string;
+  features: string[];
+  is_popular: boolean;
+  badge: string | null;
+  color: string;
+  bg_color: string;
+  border_color: string;
+}
+
+interface ProductsProps {
+  products?: ProductData[];
+}
+
+const defaultProducts: ProductData[] = [
+  { id: "1", name: "BASE CONTROL", tagline: "Базовый контроль и отчётность", description: "Идеальный старт для тех, кто хочет навести порядок в учёте и получать регулярные отчёты о состоянии бизнеса.", icon: "Zap", features: ["Ежемесячные отчёты по food cost", "Контроль остатков", "Базовая аналитика", "Консультации по запросу", "Telegram-поддержка"], is_popular: false, badge: null, color: "from-slate-600 to-slate-700", bg_color: "bg-slate-50", border_color: "border-slate-200" },
+  { id: "2", name: "PRO CONTROL", tagline: "Углублённый учёт + аналитика", description: "Для тех, кто серьёзно относится к контролю. Полный цикл управления учётом с глубокой аналитикой.", icon: "Sparkles", features: ["Всё из BASE CONTROL", "Еженедельная аналитика", "Контроль отклонений", "Работа с поставщиками", "Оптимизация закупок", "Приоритетная поддержка", "Ежемесячные встречи"], is_popular: true, badge: null, color: "from-[#5838a8] to-[#c04880]", bg_color: "bg-gradient-to-br from-[#5838a8]/5 to-[#c04880]/5", border_color: "border-[#5838a8]/20" },
+  { id: "3", name: "CONTROL HUB", tagline: "Цифровая платформа контроля", description: "Наша собственная платформа для автоматизированного контроля всех процессов в реальном времени.", icon: "Crown", features: ["Всё из PRO CONTROL", "Доступ к платформе 24/7", "Дашборды в реальном времени", "Автоматические уведомления", "API-интеграции", "Кастомные отчёты", "Персональный менеджер", "SLA 99.9%"], is_popular: false, badge: "Скоро", color: "from-amber-500 to-orange-500", bg_color: "bg-amber-50", border_color: "border-amber-200" },
 ];
 
-export default function Products() {
+export default function Products({ products: productsProp }: ProductsProps) {
+  const products = productsProp || defaultProducts;
   return (
     <section id="products" className="py-24 bg-gradient-to-b from-white to-[#f8f7fc]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -88,19 +55,21 @@ export default function Products() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {products.map((product, index) => (
+          {products.map((product, index) => {
+            const IconComponent = iconMap[product.icon] || Zap;
+            return (
             <motion.div
-              key={product.name}
+              key={product.id || product.name}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className={`relative rounded-3xl p-8 ${product.bgColor} border ${product.borderColor} ${
-                product.popular ? "ring-2 ring-[#5838a8] shadow-xl shadow-[#5838a8]/10" : "shadow-lg"
+              className={`relative rounded-3xl p-8 ${product.bg_color} border ${product.border_color} ${
+                product.is_popular ? "ring-2 ring-[#5838a8] shadow-xl shadow-[#5838a8]/10" : "shadow-lg"
               } transition-all duration-300 hover:shadow-xl`}
             >
               {/* Popular badge */}
-              {product.popular && (
+              {product.is_popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                   <span className="bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white text-sm font-semibold px-4 py-1.5 rounded-full">
                     Популярный выбор
@@ -119,14 +88,14 @@ export default function Products() {
 
               {/* Icon */}
               <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${product.color} flex items-center justify-center mb-6`}>
-                <product.icon className="w-7 h-7 text-white" />
+                <IconComponent className="w-7 h-7 text-white" />
               </div>
 
               {/* Header */}
               <h3 className="text-2xl font-bold text-slate-900 mb-1">
                 {product.name}
               </h3>
-              <p className={`font-medium mb-4 ${product.popular ? "text-[#5838a8]" : "text-slate-500"}`}>
+              <p className={`font-medium mb-4 ${product.is_popular ? "text-[#5838a8]" : "text-slate-500"}`}>
                 {product.tagline}
               </p>
               <p className="text-slate-600 mb-6">
@@ -138,7 +107,7 @@ export default function Products() {
                 {product.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3">
                     <CheckCircle2 className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
-                      product.popular ? "text-[#5838a8]" : "text-slate-400"
+                      product.is_popular ? "text-[#5838a8]" : "text-slate-400"
                     }`} />
                     <span className="text-slate-700">{feature}</span>
                   </li>
@@ -151,7 +120,7 @@ export default function Products() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className={`w-full flex items-center justify-center gap-2 py-4 rounded-xl font-semibold transition-all ${
-                  product.popular
+                  product.is_popular
                     ? "bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white shadow-lg shadow-[#5838a8]/30"
                     : product.badge
                     ? "bg-slate-200 text-slate-500 cursor-not-allowed"
@@ -162,7 +131,8 @@ export default function Products() {
                 {!product.badge && <ArrowRight size={18} />}
               </motion.a>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Bottom note */}

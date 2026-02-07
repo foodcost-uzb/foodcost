@@ -4,71 +4,43 @@ import { motion } from "framer-motion";
 import { Star, Quote, Play, Youtube } from "lucide-react";
 import { useState } from "react";
 
-const testimonials = [
-  {
-    name: "Алишер Каримов",
-    role: "Владелец сети «Плов центр»",
-    location: "Ташкент",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
-    text: "Благодаря FOOD COST мы смогли снизить себестоимость блюд на 12% и увеличить прибыль на 25%. Профессиональный подход и глубокое понимание ресторанного бизнеса!",
-    rating: 5,
-  },
-  {
-    name: "Мадина Рахимова",
-    role: "Управляющая кофейни",
-    location: "Алматы",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
-    text: "Команда FOOD COST помогла нам полностью перестроить систему учёта. Теперь мы точно знаем себестоимость каждого напитка и можем принимать обоснованные решения.",
-    rating: 5,
-  },
-  {
-    name: "Бахтиёр Усманов",
-    role: "Директор ресторана «Самарканд»",
-    location: "Самарканд",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
-    text: "Отличная работа! За 3 месяца food cost снизился с 38% до 28%. Рекомендую всем, кто хочет навести порядок в учёте своего заведения.",
-    rating: 5,
-  },
-  {
-    name: "Камила Назарова",
-    role: "Совладелец сети кофеен",
-    location: "Нур-Султан",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
-    text: "Работаем с FOOD COST уже 2 года. Надёжные партнёры, всегда на связи, помогают решать любые вопросы по учёту. Очень довольны сотрудничеством!",
-    rating: 5,
-  },
-  {
-    name: "Рустам Ибрагимов",
-    role: "Владелец ресторана",
-    location: "Бухара",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face",
-    text: "Профессионалы своего дела. Провели полный аудит, выявили все проблемы и помогли их решить. Теперь бизнес работает как часы.",
-    rating: 5,
-  },
+interface TestimonialData {
+  id: string;
+  type: 'text' | 'video';
+  name: string;
+  role: string;
+  location: string;
+  avatar: string | null;
+  text: string | null;
+  rating: number;
+  video_id: string | null;
+  video_title: string | null;
+  thumbnail: string | null;
+  client_name: string | null;
+}
+
+interface TestimonialsProps {
+  testimonials?: TestimonialData[];
+}
+
+const defaultTextTestimonials = [
+  { id: "1", type: "text" as const, name: "Алишер Каримов", role: "Владелец сети «Плов центр»", location: "Ташкент", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face", text: "Благодаря FOOD COST мы смогли снизить себестоимость блюд на 12% и увеличить прибыль на 25%. Профессиональный подход и глубокое понимание ресторанного бизнеса!", rating: 5, video_id: null, video_title: null, thumbnail: null, client_name: null },
+  { id: "2", type: "text" as const, name: "Мадина Рахимова", role: "Управляющая кофейни", location: "Алматы", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face", text: "Команда FOOD COST помогла нам полностью перестроить систему учёта. Теперь мы точно знаем себестоимость каждого напитка и можем принимать обоснованные решения.", rating: 5, video_id: null, video_title: null, thumbnail: null, client_name: null },
+  { id: "3", type: "text" as const, name: "Бахтиёр Усманов", role: "Директор ресторана «Самарканд»", location: "Самарканд", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face", text: "Отличная работа! За 3 месяца food cost снизился с 38% до 28%. Рекомендую всем, кто хочет навести порядок в учёте своего заведения.", rating: 5, video_id: null, video_title: null, thumbnail: null, client_name: null },
+  { id: "4", type: "text" as const, name: "Камила Назарова", role: "Совладелец сети кофеен", location: "Нур-Султан", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face", text: "Работаем с FOOD COST уже 2 года. Надёжные партнёры, всегда на связи, помогают решать любые вопросы по учёту. Очень довольны сотрудничеством!", rating: 5, video_id: null, video_title: null, thumbnail: null, client_name: null },
+  { id: "5", type: "text" as const, name: "Рустам Ибрагимов", role: "Владелец ресторана", location: "Бухара", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face", text: "Профессионалы своего дела. Провели полный аудит, выявили все проблемы и помогли их решить. Теперь бизнес работает как часы.", rating: 5, video_id: null, video_title: null, thumbnail: null, client_name: null },
 ];
 
-const videoTestimonials = [
-  {
-    title: "Как снизить food cost на 15%",
-    thumbnail: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&h=225&fit=crop",
-    videoId: "hc1IazKcsXo",
-    client: "Сеть ресторанов «Плов Центр»",
-  },
-  {
-    title: "Внедрение iiko за 2 недели",
-    thumbnail: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=225&fit=crop",
-    videoId: "hc1IazKcsXo",
-    client: "Кафе «Самарканд»",
-  },
-  {
-    title: "Автоматизация учёта в сети кофеен",
-    thumbnail: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&h=225&fit=crop",
-    videoId: "hc1IazKcsXo",
-    client: "Brew & Bite Coffee",
-  },
+const defaultVideoTestimonials = [
+  { id: "v1", type: "video" as const, name: "Сеть ресторанов «Плов Центр»", role: "", location: "", avatar: null, text: null, rating: 5, video_id: "hc1IazKcsXo", video_title: "Как снизить food cost на 15%", thumbnail: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&h=225&fit=crop", client_name: "Сеть ресторанов «Плов Центр»" },
+  { id: "v2", type: "video" as const, name: "Кафе «Самарканд»", role: "", location: "", avatar: null, text: null, rating: 5, video_id: "hc1IazKcsXo", video_title: "Внедрение iiko за 2 недели", thumbnail: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=225&fit=crop", client_name: "Кафе «Самарканд»" },
+  { id: "v3", type: "video" as const, name: "Brew & Bite Coffee", role: "", location: "", avatar: null, text: null, rating: 5, video_id: "hc1IazKcsXo", video_title: "Автоматизация учёта в сети кофеен", thumbnail: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&h=225&fit=crop", client_name: "Brew & Bite Coffee" },
 ];
 
-export default function Testimonials() {
+export default function Testimonials({ testimonials: testimonialsProp }: TestimonialsProps) {
+  const allTestimonials = testimonialsProp || [...defaultTextTestimonials, ...defaultVideoTestimonials];
+  const testimonials = allTestimonials.filter(t => t.type === 'text');
+  const videoTestimonials = allTestimonials.filter(t => t.type === 'video');
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
   return (
@@ -112,19 +84,19 @@ export default function Testimonials() {
           <div className="grid md:grid-cols-3 gap-6">
             {videoTestimonials.map((video, index) => (
               <motion.div
-                key={video.title}
+                key={video.id || video.video_title}
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="group relative rounded-2xl overflow-hidden cursor-pointer"
-                onClick={() => setActiveVideo(video.videoId)}
+                onClick={() => setActiveVideo(video.video_id)}
               >
                 {/* Thumbnail */}
                 <div className="relative aspect-video">
                   <img
-                    src={video.thumbnail}
-                    alt={video.title}
+                    src={video.thumbnail || ""}
+                    alt={video.video_title || ""}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
@@ -142,8 +114,8 @@ export default function Testimonials() {
 
                 {/* Info */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-                  <h4 className="font-semibold text-white">{video.title}</h4>
-                  <p className="text-sm text-slate-300">{video.client}</p>
+                  <h4 className="font-semibold text-white">{video.video_title}</h4>
+                  <p className="text-sm text-slate-300">{video.client_name}</p>
                 </div>
               </motion.div>
             ))}
@@ -187,7 +159,7 @@ export default function Testimonials() {
           <div className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide">
             {testimonials.map((testimonial, index) => (
               <motion.div
-                key={testimonial.name}
+                key={testimonial.id || testimonial.name}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
@@ -200,7 +172,7 @@ export default function Testimonials() {
 
                   {/* Text */}
                   <p className="text-slate-300 mb-6 leading-relaxed">
-                    "{testimonial.text}"
+                    &ldquo;{testimonial.text}&rdquo;
                   </p>
 
                   {/* Rating */}
@@ -217,7 +189,7 @@ export default function Testimonials() {
                   {/* Author */}
                   <div className="flex items-center gap-4">
                     <img
-                      src={testimonial.avatar}
+                      src={testimonial.avatar || ""}
                       alt={testimonial.name}
                       className="w-12 h-12 rounded-full object-cover ring-2 ring-[#5838a8]/20"
                     />

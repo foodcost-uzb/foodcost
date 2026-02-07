@@ -3,43 +3,33 @@
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, ArrowUpRight } from "lucide-react";
 
-const cases = [
-  {
-    title: "Сеть ресторанов «Плов центр»",
-    location: "Ташкент, Узбекистан",
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop",
-    results: [
-      { label: "Снижение food cost", value: "-12%", positive: true },
-      { label: "Рост выручки", value: "+25%", positive: true },
-      { label: "Сокращение потерь", value: "-45%", positive: true },
-    ],
-    description: "Комплексный аудит и постановка учёта для сети из 5 ресторанов.",
-  },
-  {
-    title: "Кофейня «Brew & Bite»",
-    location: "Алматы, Казахстан",
-    image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&h=400&fit=crop",
-    results: [
-      { label: "Оптимизация меню", value: "+30%", positive: true },
-      { label: "Маржинальность", value: "+18%", positive: true },
-      { label: "Время учёта", value: "-60%", positive: true },
-    ],
-    description: "Внедрение системы управленческого учёта и калькуляция меню.",
-  },
-  {
-    title: "Ресторан «Самарканд»",
-    location: "Самарканд, Узбекистан",
-    image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&h=400&fit=crop",
-    results: [
-      { label: "Food cost", value: "28%", positive: true },
-      { label: "Прибыль", value: "+35%", positive: true },
-      { label: "ROI проекта", value: "340%", positive: true },
-    ],
-    description: "Полный цикл: от аудита до внедрения автоматизированной системы учёта.",
-  },
+interface CaseResult {
+  label: string;
+  value: string;
+  positive: boolean;
+}
+
+interface CaseData {
+  id: string;
+  title: string;
+  location: string;
+  image: string;
+  results: CaseResult[];
+  description: string;
+}
+
+interface CasesProps {
+  cases?: CaseData[];
+}
+
+const defaultCases: CaseData[] = [
+  { id: "1", title: "Сеть ресторанов «Плов центр»", location: "Ташкент, Узбекистан", image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop", results: [{ label: "Снижение food cost", value: "-12%", positive: true }, { label: "Рост выручки", value: "+25%", positive: true }, { label: "Сокращение потерь", value: "-45%", positive: true }], description: "Комплексный аудит и постановка учёта для сети из 5 ресторанов." },
+  { id: "2", title: "Кофейня «Brew & Bite»", location: "Алматы, Казахстан", image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&h=400&fit=crop", results: [{ label: "Оптимизация меню", value: "+30%", positive: true }, { label: "Маржинальность", value: "+18%", positive: true }, { label: "Время учёта", value: "-60%", positive: true }], description: "Внедрение системы управленческого учёта и калькуляция меню." },
+  { id: "3", title: "Ресторан «Самарканд»", location: "Самарканд, Узбекистан", image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&h=400&fit=crop", results: [{ label: "Food cost", value: "28%", positive: true }, { label: "Прибыль", value: "+35%", positive: true }, { label: "ROI проекта", value: "340%", positive: true }], description: "Полный цикл: от аудита до внедрения автоматизированной системы учёта." },
 ];
 
-export default function Cases() {
+export default function Cases({ cases: casesProp }: CasesProps) {
+  const cases = casesProp || defaultCases;
   return (
     <section id="cases" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -66,7 +56,7 @@ export default function Cases() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {cases.map((item, index) => (
             <motion.div
-              key={item.title}
+              key={item.id || item.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

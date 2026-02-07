@@ -31,13 +31,18 @@ const principles = [
   },
 ];
 
-const stats = [
-  { icon: Award, value: "50+", label: "лет общего стажа" },
-  { icon: Users, value: "100+", label: "довольных клиентов" },
-  { icon: Globe, value: "5", label: "стран СНГ" },
-];
+interface AboutProps {
+  settings?: Record<string, string>;
+}
 
-export default function About() {
+export default function About({ settings }: AboutProps) {
+  const s = settings || {};
+
+  const stats = [
+    { icon: Award, value: s.about_stat_1_value || "50+", label: s.about_stat_1_label || "лет общего стажа" },
+    { icon: Users, value: s.about_stat_2_value || "100+", label: s.about_stat_2_label || "довольных клиентов" },
+    { icon: Globe, value: s.about_stat_3_value || "5", label: s.about_stat_3_label || "стран СНГ" },
+  ];
   return (
     <section id="about" className="py-24 bg-[#f8f7fc]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -60,15 +65,12 @@ export default function About() {
             <div className="relative mb-10">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#5838a8] to-[#c04880] rounded-full" />
               <blockquote className="pl-6 text-xl sm:text-2xl text-slate-700 font-medium leading-relaxed">
-                «Избавить ресторанный бизнес от хаоса в управлении, учёте и финансах,
-                делая владельцев успешными и свободными»
+                {s.about_mission || "«Избавить ресторанный бизнес от хаоса в управлении, учёте и финансах, делая владельцев успешными и свободными»"}
               </blockquote>
             </div>
 
             <p className="text-lg text-slate-600 mb-8">
-              FOOD COST — команда экспертов с суммарным опытом более 50 лет в индустрии HoReCa.
-              Мы помогаем ресторанам, кафе и отелям выстроить системный учёт и контроль,
-              который освобождает владельцев от операционной рутины.
+              {s.about_description || "FOOD COST — команда экспертов с суммарным опытом более 50 лет в индустрии HoReCa. Мы помогаем ресторанам, кафе и отелям выстроить системный учёт и контроль, который освобождает владельцев от операционной рутины."}
             </p>
 
             {/* Stats */}

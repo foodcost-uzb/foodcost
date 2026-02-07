@@ -3,7 +3,12 @@
 import { motion } from "framer-motion";
 import { Play, Youtube, Bell, Headphones } from "lucide-react";
 
-export default function Podcast() {
+interface PodcastProps {
+  settings?: Record<string, string>;
+}
+
+export default function Podcast({ settings }: PodcastProps) {
+  const s = settings || {};
   return (
     <section id="podcast" className="py-24 bg-gradient-to-br from-[#1a1a2e] via-[#16162a] to-[#1a1a2e] text-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -28,7 +33,7 @@ export default function Podcast() {
             </h2>
 
             <p className="text-xl text-slate-300 mb-6">
-              Подкаст о финансах, учёте и управлении в ресторанном бизнесе от команды FOOD COST
+              {s.podcast_description || "Подкаст о финансах, учёте и управлении в ресторанном бизнесе от команды FOOD COST"}
             </p>
 
             <p className="text-slate-400 mb-8">
@@ -56,7 +61,7 @@ export default function Podcast() {
             {/* CTA */}
             <div className="flex flex-wrap gap-4">
               <motion.a
-                href="https://www.youtube.com/@FoodCostGroup"
+                href={s.podcast_youtube_url || "https://www.youtube.com/@FoodCostGroup"}
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.05 }}
@@ -67,7 +72,7 @@ export default function Podcast() {
                 Смотреть на YouTube
               </motion.a>
               <motion.a
-                href="https://www.youtube.com/@FoodCostGroup?sub_confirmation=1"
+                href={`${s.podcast_youtube_url || "https://www.youtube.com/@FoodCostGroup"}?sub_confirmation=1`}
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.05 }}
@@ -94,7 +99,7 @@ export default function Podcast() {
             {/* Video container */}
             <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10">
               <iframe
-                src="https://www.youtube.com/embed/hc1IazKcsXo"
+                src={`https://www.youtube.com/embed/${s.podcast_video_id || "hc1IazKcsXo"}`}
                 title="Бизнес на цифрах - Подкаст FOOD COST"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

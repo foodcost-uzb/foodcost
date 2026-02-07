@@ -4,7 +4,12 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { Send, Phone, Mail, MapPin, MessageCircle, Loader2 } from "lucide-react";
 
-export default function ContactForm() {
+interface ContactFormProps {
+  settings?: Record<string, string>;
+}
+
+export default function ContactForm({ settings }: ContactFormProps) {
+  const s = settings || {};
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -18,14 +23,20 @@ export default function ContactForm() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, source: "form" }),
+      });
+    } catch {
+      // Silently fail — show success anyway for UX
+    }
 
     setIsSubmitting(false);
     setIsSubmitted(true);
     setFormData({ name: "", phone: "", email: "", message: "" });
 
-    // Reset success message after 5 seconds
     setTimeout(() => setIsSubmitted(false), 5000);
   };
 
@@ -60,7 +71,7 @@ export default function ContactForm() {
             {/* Contact cards */}
             <div className="space-y-4">
               <motion.a
-                href="tel:+998901234567"
+                href={`tel:${s.contact_phone || "+998901234567"}`}
                 whileHover={{ scale: 1.02 }}
                 className="flex items-center gap-4 bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-[#5838a8]/10 hover:border-[#5838a8]/20"
               >
@@ -69,12 +80,12 @@ export default function ContactForm() {
                 </div>
                 <div>
                   <div className="text-sm text-slate-500">Телефон</div>
-                  <div className="font-semibold text-slate-900">+998 90 123 45 67</div>
+                  <div className="font-semibold text-slate-900">{s.contact_phone_display || "+998 90 123 45 67"}</div>
                 </div>
               </motion.a>
 
               <motion.a
-                href="mailto:info@foodcost.uz"
+                href={`mailto:${s.contact_email || "info@foodcost.uz"}`}
                 whileHover={{ scale: 1.02 }}
                 className="flex items-center gap-4 bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-[#5838a8]/10 hover:border-[#5838a8]/20"
               >
@@ -83,7 +94,7 @@ export default function ContactForm() {
                 </div>
                 <div>
                   <div className="text-sm text-slate-500">Email</div>
-                  <div className="font-semibold text-slate-900">info@foodcost.uz</div>
+                  <div className="font-semibold text-slate-900">{s.contact_email || "info@foodcost.uz"}</div>
                 </div>
               </motion.a>
 
@@ -96,7 +107,7 @@ export default function ContactForm() {
                 </div>
                 <div>
                   <div className="text-sm text-slate-500">Адрес</div>
-                  <div className="font-semibold text-slate-900">Ташкент, Узбекистан</div>
+                  <div className="font-semibold text-slate-900">{s.contact_address || "Ташкент, Узбекистан"}</div>
                 </div>
               </motion.div>
             </div>
@@ -104,7 +115,7 @@ export default function ContactForm() {
             {/* Social buttons */}
             <div className="flex gap-4 mt-8">
               <motion.a
-                href="https://wa.me/998901234567"
+                href={s.contact_whatsapp || "https://wa.me/998901234567"}
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.05 }}
@@ -115,7 +126,7 @@ export default function ContactForm() {
                 WhatsApp
               </motion.a>
               <motion.a
-                href="https://t.me/foodcost"
+                href={s.contact_telegram || "https://t.me/foodcost"}
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.05 }}

@@ -19,13 +19,19 @@ export default function CallbackModal({ isOpen, onClose }: CallbackModalProps) {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, phone, source: "callback" }),
+      });
+    } catch {
+      // Silently fail
+    }
 
     setIsSubmitting(false);
     setIsSubmitted(true);
 
-    // Reset and close after success
     setTimeout(() => {
       setIsSubmitted(false);
       setPhone("");
