@@ -39,7 +39,7 @@
 | Сервис | Назначение | Детали |
 |--------|------------|--------|
 | **Vercel** | Хостинг (Next.js) | Автодеплой, serverless functions |
-| **Supabase** | База данных | Проект `eiulmeuhwlfkowwtenli`, регион `eu-central-1` |
+| **Supabase** | База данных + Storage | Проект `eiulmeuhwlfkowwtenli`, регион `eu-central-1` |
 | **GitHub** | Репозиторий | `foodcost-uzb/foodcost` |
 | **Tomas.uz** | DNS | NS: `ns1.tomas.uz` |
 
@@ -88,7 +88,8 @@ src/
 │       ├── content/         # CRUD: services, products, cases, testimonials
 │       ├── leads/           # Приём заявок (public) + управление (admin)
 │       ├── settings/        # Настройки сайта + калькулятора
-│       └── analytics/       # Трекинг просмотров/событий + агрегация
+│       ├── analytics/       # Трекинг просмотров/событий + агрегация
+│       └── upload/          # Загрузка изображений в Supabase Storage
 ├── components/
 │   ├── Header.tsx           # Навигация + телефон + Telegram
 │   ├── Hero.tsx             # Hero-секция (props из настроек)
@@ -106,7 +107,8 @@ src/
 │   ├── AnalyticsTracker.tsx # Автотрекинг просмотров
 │   └── admin/
 │       ├── AdminSidebar.tsx # Боковая навигация админки
-│       └── AdminHeader.tsx  # Шапка админки с breadcrumbs
+│       ├── AdminHeader.tsx  # Шапка админки с breadcrumbs
+│       └── ImageUpload.tsx  # Drag & drop загрузка изображений
 ├── lib/
 │   ├── utils.ts             # Утилиты (cn для classnames)
 │   ├── auth.ts              # JWT: verify, hash, cookies
@@ -141,10 +143,21 @@ src/
 | `page_views` | Просмотры страниц | динамически |
 | `analytics_events` | Аналитические события | динамически |
 
+### Supabase Storage
+
+| Параметр | Значение |
+|----------|----------|
+| **Bucket** | `images` (public) |
+| **Путь** | `{folder}/{timestamp}-{random}.{ext}` |
+| **Папки** | `cases`, `testimonials`, `general` |
+| **Лимиты** | JPEG/PNG/WebP/AVIF, макс 4 МБ |
+| **API** | `POST /api/upload` (multipart/form-data, admin only) |
+
 ### RLS и доступ
 - Публичные INSERT (leads, analytics) — через service role в API routes
 - Публичные SELECT (контент, настройки) — через anon key
 - Админ-операции — через service role key
+- Загрузка файлов — через service role (Supabase Storage)
 
 ---
 
@@ -255,6 +268,7 @@ npx vercel --prod
 
 - Лендинг с данными из Supabase
 - Админ-панель (CRUD, лиды, аналитика, настройки)
+- Загрузка изображений в админке (drag & drop → Supabase Storage)
 - Модальные окна для "Подробнее" (услуги, продукты, кейсы)
 - Видео-отзывы с поддержкой YouTube Shorts
 - Цены на карточках продуктов (пакетов)

@@ -11,6 +11,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { CaseStudy, CaseResult } from "@/lib/supabase/types";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 export default function EditCasePage({
   params,
@@ -177,27 +178,21 @@ export default function EditCasePage({
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1.5">
-              URL изображения
+              Изображение
             </label>
-            <input
-              type="url"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-              placeholder="https://example.com/image.jpg"
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-[#5838a8]/20 focus:border-[#5838a8] outline-none transition-colors"
-            />
-            {image && (
-              <div className="mt-3">
-                <img
-                  src={image}
-                  alt="Preview"
-                  className="w-32 h-20 rounded-lg object-cover border border-slate-200"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = "none";
-                  }}
-                />
-              </div>
-            )}
+            <ImageUpload value={image} onChange={setImage} folder="cases" />
+            <div className="mt-3">
+              <label className="block text-xs font-medium text-slate-400 mb-1">
+                Или вставьте URL вручную
+              </label>
+              <input
+                type="url"
+                value={image}
+                onChange={(e) => setImage(e.target.value)}
+                placeholder="https://example.com/image.jpg"
+                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-[#5838a8]/20 focus:border-[#5838a8] outline-none transition-colors"
+              />
+            </div>
           </div>
 
           <div>
