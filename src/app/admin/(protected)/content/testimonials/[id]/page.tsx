@@ -149,7 +149,7 @@ export default function EditTestimonialPage({
         location: form.location.trim(),
         avatar: form.avatar.trim() || null,
         text: form.type === "text" ? form.text.trim() : null,
-        rating: form.type === "text" ? form.rating : 0,
+        rating: form.type === "text" ? form.rating : 5,
         video_id: form.type === "video" ? form.video_id.trim() : null,
         video_title: form.type === "video" ? form.video_title.trim() : null,
         thumbnail: form.type === "video" ? form.thumbnail.trim() || null : null,
@@ -497,6 +497,25 @@ export default function EditTestimonialPage({
                   placeholder="Например: Алишер Каримов"
                   className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5838a8]/20 focus:border-[#5838a8] transition-colors text-sm"
                 />
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => updateField("role", form.role === "short" ? "" : "short")}
+                  className={`relative w-11 h-6 rounded-full transition-colors ${
+                    form.role === "short" ? "bg-[#c04880]" : "bg-slate-300"
+                  }`}
+                >
+                  <span
+                    className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                      form.role === "short" ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+                <span className="text-sm text-slate-700">
+                  YouTube Shorts (вертикальное видео)
+                </span>
               </div>
             </div>
           </div>

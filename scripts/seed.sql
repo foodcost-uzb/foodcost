@@ -43,11 +43,10 @@ INSERT INTO testimonials (type, name, role, location, avatar, text, rating, sort
 ('text', 'Камила Назарова', 'Совладелец сети кофеен', 'Нур-Султан', 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face', 'Работаем с FOOD COST уже 2 года. Надёжные партнёры, всегда на связи, помогают решать любые вопросы по учёту. Очень довольны сотрудничеством!', 5, 4),
 ('text', 'Рустам Ибрагимов', 'Владелец ресторана', 'Бухара', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face', 'Профессионалы своего дела. Провели полный аудит, выявили все проблемы и помогли их решить. Теперь бизнес работает как часы.', 5, 5);
 
--- Testimonials - Video
+-- Testimonials - Video (YouTube Shorts, role='short' marks vertical format)
 INSERT INTO testimonials (type, name, role, video_id, video_title, thumbnail, client_name, sort_order) VALUES
-('video', 'Сеть ресторанов «Плов Центр»', '', 'hc1IazKcsXo', 'Как снизить food cost на 15%', 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&h=225&fit=crop', 'Сеть ресторанов «Плов Центр»', 10),
-('video', 'Кафе «Самарканд»', '', 'hc1IazKcsXo', 'Внедрение iiko за 2 недели', 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=225&fit=crop', 'Кафе «Самарканд»', 11),
-('video', 'Brew & Bite Coffee', '', 'hc1IazKcsXo', 'Автоматизация учёта в сети кофеен', 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&h=225&fit=crop', 'Brew & Bite Coffee', 12);
+('video', 'Отзыв клиента #1', 'short', 'RMFF5yRB_JI', 'Отзыв о работе с FOOD COST', 'https://img.youtube.com/vi/RMFF5yRB_JI/hqdefault.jpg', 'Клиент FOOD COST', 10),
+('video', 'Отзыв клиента #2', 'short', 'eegQdfusD3c', 'Результаты сотрудничества с FOOD COST', 'https://img.youtube.com/vi/eegQdfusD3c/hqdefault.jpg', 'Клиент FOOD COST', 11);
 
 -- =============================================
 -- Site Settings

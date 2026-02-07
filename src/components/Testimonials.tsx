@@ -32,16 +32,15 @@ const defaultTextTestimonials = [
 ];
 
 const defaultVideoTestimonials = [
-  { id: "v1", type: "video" as const, name: "Сеть ресторанов «Плов Центр»", role: "", location: "", avatar: null, text: null, rating: 5, video_id: "hc1IazKcsXo", video_title: "Как снизить food cost на 15%", thumbnail: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&h=225&fit=crop", client_name: "Сеть ресторанов «Плов Центр»" },
-  { id: "v2", type: "video" as const, name: "Кафе «Самарканд»", role: "", location: "", avatar: null, text: null, rating: 5, video_id: "hc1IazKcsXo", video_title: "Внедрение iiko за 2 недели", thumbnail: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=225&fit=crop", client_name: "Кафе «Самарканд»" },
-  { id: "v3", type: "video" as const, name: "Brew & Bite Coffee", role: "", location: "", avatar: null, text: null, rating: 5, video_id: "hc1IazKcsXo", video_title: "Автоматизация учёта в сети кофеен", thumbnail: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&h=225&fit=crop", client_name: "Brew & Bite Coffee" },
+  { id: "v1", type: "video" as const, name: "Отзыв клиента #1", role: "short", location: "", avatar: null, text: null, rating: 5, video_id: "RMFF5yRB_JI", video_title: "Отзыв о работе с FOOD COST", thumbnail: "https://img.youtube.com/vi/RMFF5yRB_JI/hqdefault.jpg", client_name: "Клиент FOOD COST" },
+  { id: "v2", type: "video" as const, name: "Отзыв клиента #2", role: "short", location: "", avatar: null, text: null, rating: 5, video_id: "eegQdfusD3c", video_title: "Результаты сотрудничества с FOOD COST", thumbnail: "https://img.youtube.com/vi/eegQdfusD3c/hqdefault.jpg", client_name: "Клиент FOOD COST" },
 ];
 
 export default function Testimonials({ testimonials: testimonialsProp }: TestimonialsProps) {
-  const allTestimonials = testimonialsProp || [...defaultTextTestimonials, ...defaultVideoTestimonials];
+  const allTestimonials: TestimonialData[] = testimonialsProp || [...defaultTextTestimonials, ...defaultVideoTestimonials];
   const testimonials = allTestimonials.filter(t => t.type === 'text');
   const videoTestimonials = allTestimonials.filter(t => t.type === 'video');
-  const [activeVideo, setActiveVideo] = useState<string | null>(null);
+  const [activeVideo, setActiveVideo] = useState<TestimonialData | null>(null);
 
   return (
     <section id="testimonials" className="py-24 bg-gradient-to-br from-[#1a1a2e] via-[#16162a] to-[#1a1a2e] text-white overflow-hidden">
@@ -69,58 +68,64 @@ export default function Testimonials({ testimonials: testimonialsProp }: Testimo
         </motion.div>
 
         {/* Video Testimonials */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="mb-16"
-        >
-          <h3 className="text-2xl font-bold mb-8 flex items-center gap-3">
-            <Youtube className="text-red-500" />
-            Видео-отзывы клиентов
-          </h3>
+        {videoTestimonials.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="mb-16"
+          >
+            <h3 className="text-2xl font-bold mb-8 flex items-center gap-3">
+              <Youtube className="text-red-500" />
+              Видео-отзывы клиентов
+            </h3>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {videoTestimonials.map((video, index) => (
-              <motion.div
-                key={video.id || video.video_title}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group relative rounded-2xl overflow-hidden cursor-pointer"
-                onClick={() => setActiveVideo(video.video_id)}
-              >
-                {/* Thumbnail */}
-                <div className="relative aspect-video">
-                  <img
-                    src={video.thumbnail || ""}
-                    alt={video.video_title || ""}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
+            <div className={`grid gap-6 ${
+              videoTestimonials.length <= 2
+                ? 'grid-cols-1 sm:grid-cols-2 max-w-2xl'
+                : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+            }`}>
+              {videoTestimonials.map((video, index) => (
+                <motion.div
+                  key={video.id || video.video_title}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="group relative rounded-2xl overflow-hidden cursor-pointer"
+                  onClick={() => setActiveVideo(video)}
+                >
+                  {/* Thumbnail */}
+                  <div className={`relative ${video.role === 'short' ? 'aspect-[3/4]' : 'aspect-video'}`}>
+                    <img
+                      src={video.thumbnail || `https://img.youtube.com/vi/${video.video_id}/hqdefault.jpg`}
+                      alt={video.video_title || ""}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
 
-                  {/* Play button */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <motion.div
-                      whileHover={{ scale: 1.1 }}
-                      className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-xl"
-                    >
-                      <Play size={28} className="text-[#5838a8] ml-1" fill="#5838a8" />
-                    </motion.div>
+                    {/* Play button */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-xl"
+                      >
+                        <Play size={28} className="text-[#5838a8] ml-1" fill="#5838a8" />
+                      </motion.div>
+                    </div>
                   </div>
-                </div>
 
-                {/* Info */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-                  <h4 className="font-semibold text-white">{video.video_title}</h4>
-                  <p className="text-sm text-slate-300">{video.client_name}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+                  {/* Info */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+                    <h4 className="font-semibold text-white">{video.video_title}</h4>
+                    <p className="text-sm text-slate-300">{video.client_name}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         {/* Video Modal */}
         {activeVideo && (
@@ -134,11 +139,15 @@ export default function Testimonials({ testimonials: testimonialsProp }: Testimo
             <motion.div
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
-              className="relative w-full max-w-4xl aspect-video"
+              className={`relative ${
+                activeVideo.role === 'short'
+                  ? 'w-full max-w-[380px] aspect-[9/16] max-h-[85vh]'
+                  : 'w-full max-w-4xl aspect-video'
+              }`}
               onClick={(e) => e.stopPropagation()}
             >
               <iframe
-                src={`https://www.youtube.com/embed/${activeVideo}?autoplay=1`}
+                src={`https://www.youtube.com/embed/${activeVideo.video_id}?autoplay=1`}
                 title="Video testimonial"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
