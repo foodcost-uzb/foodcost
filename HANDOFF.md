@@ -59,6 +59,8 @@ NEXT_PUBLIC_SUPABASE_URL=https://eiulmeuhwlfkowwtenli.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
 SUPABASE_SERVICE_ROLE_KEY=<service role key>
 JWT_SECRET=<random 48+ chars>
+TELEGRAM_BOT_TOKEN=<bot token from @BotFather>
+TELEGRAM_CHAT_ID=<chat id for notifications>
 ```
 
 Настроены в Vercel (production) и в `.env.local` (локально).
@@ -182,6 +184,21 @@ WhatsApp убран — используется только Telegram.
 
 ---
 
+## Telegram-уведомления
+
+При каждой новой заявке (форма контактов, обратный звонок, калькулятор) отправляется уведомление в Telegram.
+
+| Параметр | Значение |
+|----------|----------|
+| **Бот** | @callback_fo_bot ("FOOD COST ЗАЯВКИ") |
+| **Получатель** | Рустам Рахманбердиев (@rustam_foodcost, chat_id: 278977157) |
+| **Формат** | HTML: имя, телефон, email, сообщение, источник |
+| **Реализация** | `src/app/api/leads/route.ts` — non-blocking fetch после сохранения в БД |
+
+Для смены получателя: обновить `TELEGRAM_CHAT_ID` в `.env.local` и Vercel.
+
+---
+
 ## Запуск
 
 ```bash
@@ -209,6 +226,7 @@ npx vercel --prod
 - Админ-панель (CRUD, лиды, аналитика, настройки)
 - Модальные окна для "Подробнее" (услуги, продукты, кейсы)
 - Формы заявок → Supabase leads
+- Telegram-уведомления о новых заявках
 - Аналитика просмотров и событий
 - Задеплоено на Vercel, домен foodcost.uz привязан
 
