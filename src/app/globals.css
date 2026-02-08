@@ -93,17 +93,17 @@ body {
   animation: gradient-shift 3s ease infinite;
 }
 
-/* Marquee animation */
+/* Marquee animation — distance set dynamically via --marquee-distance */
 @keyframes marquee {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  100% { transform: translateX(var(--marquee-distance, -50%)); }
 }
 
-.animate-marquee {
+.marquee-track {
   animation: marquee 30s linear infinite;
 }
 
-.animate-marquee:hover {
+.marquee-track.paused {
   animation-play-state: paused;
 }
 

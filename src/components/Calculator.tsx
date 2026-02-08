@@ -9,6 +9,19 @@ export default function Calculator() {
   const [currentFoodCost, setCurrentFoodCost] = useState<string>("");
   const [targetFoodCost, setTargetFoodCost] = useState<string>("");
 
+  // Format number with space separators: 100000000 → 100 000 000
+  const formatNumber = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  };
+
+  const handleRevenueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\s/g, "");
+    if (raw === "" || /^\d+$/.test(raw)) {
+      setRevenue(raw);
+    }
+  };
+
   const calculateSavings = () => {
     const rev = parseFloat(revenue) || 0;
     const current = parseFloat(currentFoodCost) || 0;
@@ -95,9 +108,10 @@ export default function Calculator() {
                     Месячная выручка (сум)
                   </label>
                   <input
-                    type="number"
-                    value={revenue}
-                    onChange={(e) => setRevenue(e.target.value)}
+                    type="text"
+                    inputMode="numeric"
+                    value={formatNumber(revenue)}
+                    onChange={handleRevenueChange}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#5838a8] focus:border-transparent outline-none transition-all"
                     placeholder="100 000 000"
                   />
