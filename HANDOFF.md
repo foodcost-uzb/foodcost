@@ -1,6 +1,6 @@
 # FOOD COST — Handoff документация
 
-**Дата обновления:** 7 февраля 2026
+**Дата обновления:** 8 февраля 2026
 
 ---
 
@@ -38,7 +38,7 @@
 
 | Сервис | Назначение | Детали |
 |--------|------------|--------|
-| **Vercel** | Хостинг (Next.js) | Автодеплой, serverless functions |
+| **Vercel** | Хостинг (Next.js) | Ручной деплой (нет автодеплоя), serverless functions |
 | **Supabase** | База данных + Storage | Проект `eiulmeuhwlfkowwtenli`, регион `eu-central-1` |
 | **GitHub** | Репозиторий | `foodcost-uzb/foodcost` |
 | **Tomas.uz** | DNS | NS: `ns1.tomas.uz` |
@@ -79,13 +79,13 @@ src/
 │   │   ├── login/           # Страница входа (минимальный layout)
 │   │   └── (protected)/     # Защищённые страницы админки
 │   │       ├── page.tsx         # Дашборд (KPI, график, лиды)
-│   │       ├── content/         # CRUD: услуги, продукты, кейсы, отзывы
+│   │       ├── content/         # CRUD: услуги, продукты, кейсы, отзывы, проекты
 │   │       ├── leads/           # Управление заявками
 │   │       ├── analytics/       # Просмотры, события, конверсия
 │   │       └── settings/        # Настройки сайта по группам
 │   └── api/
 │       ├── auth/            # Login, logout, session check
-│       ├── content/         # CRUD: services, products, cases, testimonials
+│       ├── content/         # CRUD: services, products, cases, testimonials, projects
 │       ├── leads/           # Приём заявок (public) + управление (admin)
 │       ├── settings/        # Настройки сайта + калькулятора
 │       ├── analytics/       # Трекинг просмотров/событий + агрегация
@@ -97,6 +97,7 @@ src/
 │   ├── Products.tsx         # Тарифы + модальные окна
 │   ├── About.tsx            # О компании (props из настроек)
 │   ├── Cases.tsx            # Кейсы + модальные окна
+│   ├── ProjectLogos.tsx     # Бегущая строка логотипов проектов (marquee)
 │   ├── Calculator.tsx       # Интерактивный калькулятор food cost
 │   ├── Testimonials.tsx     # Отзывы: текст + видео
 │   ├── Podcast.tsx          # Подкаст (YouTube embed)
@@ -118,9 +119,9 @@ src/
 │   └── supabase/
 │       ├── client.ts        # Браузерный Supabase-клиент
 │       ├── server.ts        # Серверный + admin клиент
-│       └── types.ts         # TypeScript-типы для 10 таблиц
+│       └── types.ts         # TypeScript-типы для 11 таблиц
 └── scripts/
-    ├── schema.sql           # Схема БД (10 таблиц + RLS + индексы)
+    ├── schema.sql           # Схема БД (11 таблиц + RLS + индексы)
     └── seed.sql             # Начальные данные
 ```
 
@@ -128,15 +129,16 @@ src/
 
 ## База данных (Supabase)
 
-10 таблиц:
+11 таблиц:
 
 | Таблица | Описание | Записей |
 |---------|----------|---------|
 | `admin_users` | Администраторы | 1 |
-| `services` | Услуги | 5 |
+| `services` | Услуги | 6 |
 | `products` | Тарифы/продукты | 3 |
 | `cases` | Кейсы | 3 |
 | `testimonials` | Отзывы (текст + видео, YouTube Shorts) | 7 |
+| `project_logos` | Логотипы проектов (marquee) | 36 |
 | `leads` | Заявки с сайта | динамически |
 | `site_settings` | Настройки сайта | 31 |
 | `calculator_settings` | Настройки калькулятора | 1 |
@@ -149,7 +151,7 @@ src/
 |----------|----------|
 | **Bucket** | `images` (public) |
 | **Путь** | `{folder}/{timestamp}-{random}.{ext}` |
-| **Папки** | `cases`, `testimonials`, `general` |
+| **Папки** | `cases`, `testimonials`, `projects`, `general` |
 | **Лимиты** | JPEG/PNG/WebP/AVIF, макс 4 МБ |
 | **API** | `POST /api/upload` (multipart/form-data, admin only) |
 
@@ -227,8 +229,8 @@ npm run build
 # Продакшн
 npm start
 
-# Деплой на Vercel
-npx vercel --prod
+# Деплой на Vercel (автодеплой не настроен, нужен ручной)
+vercel deploy --prod --yes --token <VERCEL_TOKEN>
 ```
 
 ---
@@ -264,14 +266,59 @@ npx vercel --prod
 
 ---
 
+## Секция «Наши проекты» (бегущая строка логотипов)
+
+Горизонтальный бесконечный marquee с логотипами клиентов/проектов. Расположена после секции «Кейсы», перед «Отзывами».
+
+| Параметр | Значение |
+|----------|----------|
+| **Компонент** | `src/components/ProjectLogos.tsx` |
+| **Таблица** | `project_logos` (11-я таблица) |
+| **Анимация** | CSS `@keyframes marquee` с JS-измерением ширины трека |
+| **Скорость** | ~200px/сек (динамически рассчитывается) |
+| **Drag-to-scroll** | При наведении можно перетаскивать ленту мышью |
+| **Админ-панель** | Контент → Проекты (CRUD + загрузка логотипов) |
+
+Особенности реализации:
+- Два дублированных набора логотипов для бесшовного цикла
+- `useRef` измеряет реальную половину ширины трека → CSS-переменная `--marquee-distance`
+- Pointer events API для drag-to-scroll (пауза анимации при перетаскивании)
+- Градиентные маски по краям для плавного перехода
+
+---
+
+## Калькулятор
+
+- Поле «Выручка» поддерживает форматирование чисел с разделителями (пробелы): `100 000 000`
+- `type="text" inputMode="numeric"` для мобильной клавиатуры
+- `formatNumber()` добавляет пробелы как разделители тысяч
+
+---
+
+## Деплой на Vercel
+
+**Автодеплой НЕ настроен** — на GitHub репозитории нет вебхуков Vercel.
+
+Для деплоя:
+```bash
+vercel deploy --prod --yes --token <VERCEL_TOKEN>
+```
+
+Главная страница использует `export const dynamic = "force-dynamic"` для SSR — данные из Supabase всегда актуальны.
+
+---
+
 ## Статус: ПОЛНОСТЬЮ РЕАЛИЗОВАНО
 
-- Лендинг с данными из Supabase
+- Лендинг с данными из Supabase (`force-dynamic` SSR)
 - Админ-панель (CRUD, лиды, аналитика, настройки)
 - Загрузка изображений в админке (drag & drop → Supabase Storage)
 - Модальные окна для "Подробнее" (услуги, продукты, кейсы)
+- Секция «Наши проекты» — marquee логотипов с drag-to-scroll
+- 6 услуг (включая «Консультация»)
 - Видео-отзывы с поддержкой YouTube Shorts
 - Цены на карточках продуктов (пакетов)
+- Калькулятор с форматированием чисел
 - Формы заявок → Supabase leads
 - Telegram-уведомления о новых заявках
 - Аналитика просмотров и событий
@@ -279,4 +326,4 @@ npx vercel --prod
 
 ---
 
-*Обновлено: 7 февраля 2026*
+*Обновлено: 8 февраля 2026*
