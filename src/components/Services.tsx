@@ -8,7 +8,7 @@ import {
   Rocket,
   GraduationCap,
   HeadphonesIcon,
-  Handshake,
+  UserRoundCheck,
   ArrowRight,
   CheckCircle2,
   X,
@@ -21,7 +21,7 @@ const iconMap: Record<string, LucideIcon> = {
   Rocket,
   GraduationCap,
   HeadphonesIcon,
-  Handshake,
+  UserRoundCheck,
 };
 
 interface ServiceData {
