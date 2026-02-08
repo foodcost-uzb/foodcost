@@ -23,6 +23,7 @@ const navItems = [
       { href: "/admin/content/services", label: "Услуги" },
       { href: "/admin/content/products", label: "Продукты" },
       { href: "/admin/content/cases", label: "Кейсы" },
+      { href: "/admin/content/projects", label: "Проекты" },
       { href: "/admin/content/testimonials", label: "Отзывы" },
     ],
   },

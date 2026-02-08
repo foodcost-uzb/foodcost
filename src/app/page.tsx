@@ -5,6 +5,7 @@ import Products from "@/components/Products";
 import About from "@/components/About";
 import Podcast from "@/components/Podcast";
 import Cases from "@/components/Cases";
+import ProjectLogos from "@/components/ProjectLogos";
 import Testimonials from "@/components/Testimonials";
 import Calculator from "@/components/Calculator";
 import ContactForm from "@/components/ContactForm";
@@ -12,17 +13,18 @@ import Footer from "@/components/Footer";
 import FloatingButtons from "@/components/FloatingButtons";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
 import { SettingsProvider } from "@/lib/SettingsContext";
-import { getServices, getProducts, getCases, getTestimonials, getAllSettings } from "@/lib/data";
+import { getServices, getProducts, getCases, getTestimonials, getProjectLogos, getAllSettings } from "@/lib/data";
 
 export default async function Home() {
-  let services, products, cases, testimonials, settings;
+  let services, products, cases, testimonials, projectLogos, settings;
 
   try {
-    [services, products, cases, testimonials, settings] = await Promise.all([
+    [services, products, cases, testimonials, projectLogos, settings] = await Promise.all([
       getServices(),
       getProducts(),
       getCases(),
       getTestimonials(),
+      getProjectLogos(),
       getAllSettings(),
     ]);
   } catch {
@@ -31,6 +33,7 @@ export default async function Home() {
     products = undefined;
     cases = undefined;
     testimonials = undefined;
+    projectLogos = undefined;
     settings = undefined;
   }
 
@@ -46,6 +49,7 @@ export default async function Home() {
         <About settings={settingsMap} />
         <Podcast settings={settingsMap} />
         <Cases cases={cases && cases.length > 0 ? cases : undefined} />
+        <ProjectLogos projects={projectLogos && projectLogos.length > 0 ? projectLogos : undefined} />
         <Testimonials testimonials={testimonials && testimonials.length > 0 ? testimonials : undefined} />
         <Calculator />
         <ContactForm settings={settingsMap} />

@@ -4,7 +4,7 @@ import { getSupabaseAdmin } from '@/lib/supabase/server';
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
 const MAX_SIZE = 4 * 1024 * 1024; // 4 MB
-const ALLOWED_FOLDERS = ['cases', 'testimonials', 'general'];
+const ALLOWED_FOLDERS = ['cases', 'testimonials', 'projects', 'general'];
 
 export async function POST(request: NextRequest) {
   const admin = await verifyAdmin();

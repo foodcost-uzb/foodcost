@@ -160,6 +160,20 @@ CREATE TABLE analytics_events (
 );
 
 -- =============================================
+-- 11. Project Logos
+-- =============================================
+CREATE TABLE project_logos (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  logo TEXT NOT NULL,
+  website TEXT,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- =============================================
 -- Indexes
 -- =============================================
 CREATE INDEX idx_services_sort ON services (sort_order);
@@ -174,6 +188,7 @@ CREATE INDEX idx_page_views_created ON page_views (created_at DESC);
 CREATE INDEX idx_page_views_page ON page_views (page);
 CREATE INDEX idx_analytics_events_created ON analytics_events (created_at DESC);
 CREATE INDEX idx_analytics_events_name ON analytics_events (event_name);
+CREATE INDEX idx_project_logos_sort ON project_logos (sort_order);
 
 -- =============================================
 -- RLS (Row Level Security)
@@ -187,6 +202,7 @@ ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE calculator_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE page_views ENABLE ROW LEVEL SECURITY;
 ALTER TABLE analytics_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE project_logos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
 
 -- Public read for content
@@ -196,6 +212,7 @@ CREATE POLICY "Public read cases" ON cases FOR SELECT USING (is_active = true);
 CREATE POLICY "Public read testimonials" ON testimonials FOR SELECT USING (is_active = true);
 CREATE POLICY "Public read settings" ON site_settings FOR SELECT USING (true);
 CREATE POLICY "Public read calculator" ON calculator_settings FOR SELECT USING (true);
+CREATE POLICY "Public read project_logos" ON project_logos FOR SELECT USING (is_active = true);
 
 -- Public insert for leads and analytics
 CREATE POLICY "Public insert leads" ON leads FOR INSERT WITH CHECK (true);
@@ -220,3 +237,4 @@ CREATE TRIGGER testimonials_updated_at BEFORE UPDATE ON testimonials FOR EACH RO
 CREATE TRIGGER leads_updated_at BEFORE UPDATE ON leads FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER site_settings_updated_at BEFORE UPDATE ON site_settings FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER calculator_settings_updated_at BEFORE UPDATE ON calculator_settings FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER project_logos_updated_at BEFORE UPDATE ON project_logos FOR EACH ROW EXECUTE FUNCTION update_updated_at();

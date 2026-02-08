@@ -75,6 +75,17 @@ export interface Testimonial {
   updated_at: string;
 }
 
+export interface ProjectLogo {
+  id: string;
+  name: string;
+  logo: string;
+  website: string | null;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export type LeadStatus = 'new' | 'in_progress' | 'completed' | 'cancelled';
 export type LeadSource = 'form' | 'callback' | 'calculator';
 
@@ -144,6 +155,7 @@ export interface Database {
       calculator_settings: { Row: CalculatorSettings };
       page_views: { Row: PageView };
       analytics_events: { Row: AnalyticsEvent };
+      project_logos: { Row: ProjectLogo };
     };
   };
 }

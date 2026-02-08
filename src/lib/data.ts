@@ -1,5 +1,5 @@
 import { getSupabaseClient } from '@/lib/supabase/server';
-import type { Service, Product, CaseStudy, Testimonial, SiteSetting } from '@/lib/supabase/types';
+import type { Service, Product, CaseStudy, Testimonial, SiteSetting, ProjectLogo } from '@/lib/supabase/types';
 
 export async function getServices(): Promise<Service[]> {
   const supabase = getSupabaseClient();
@@ -35,6 +35,16 @@ export async function getTestimonials(): Promise<Testimonial[]> {
   const supabase = getSupabaseClient();
   const { data } = await supabase
     .from('testimonials')
+    .select('*')
+    .eq('is_active', true)
+    .order('sort_order');
+  return data || [];
+}
+
+export async function getProjectLogos(): Promise<ProjectLogo[]> {
+  const supabase = getSupabaseClient();
+  const { data } = await supabase
+    .from('project_logos')
     .select('*')
     .eq('is_active', true)
     .order('sort_order');
