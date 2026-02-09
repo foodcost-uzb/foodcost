@@ -34,6 +34,7 @@ const defaultTextTestimonials = [
 const defaultVideoTestimonials = [
   { id: "v1", type: "video" as const, name: "Отзыв клиента #1", role: "short", location: "", avatar: null, text: null, rating: 5, video_id: "RMFF5yRB_JI", video_title: "Отзыв о работе с FOOD COST", thumbnail: "https://img.youtube.com/vi/RMFF5yRB_JI/hqdefault.jpg", client_name: "Клиент FOOD COST" },
   { id: "v2", type: "video" as const, name: "Отзыв клиента #2", role: "short", location: "", avatar: null, text: null, rating: 5, video_id: "eegQdfusD3c", video_title: "Результаты сотрудничества с FOOD COST", thumbnail: "https://img.youtube.com/vi/eegQdfusD3c/hqdefault.jpg", client_name: "Клиент FOOD COST" },
+  { id: "v3", type: "video" as const, name: "Отзыв клиента #3", role: "short", location: "", avatar: null, text: null, rating: 5, video_id: "LtB-Y47p9vA", video_title: "Отзыв клиента о сотрудничестве", thumbnail: "https://img.youtube.com/vi/LtB-Y47p9vA/hqdefault.jpg", client_name: "Владелец проектов OKO, OBLAKO LOUNGE, ВМЯСО" },
 ];
 
 export default function Testimonials({ testimonials: testimonialsProp }: TestimonialsProps) {
