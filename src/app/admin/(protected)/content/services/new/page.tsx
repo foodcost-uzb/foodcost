@@ -15,6 +15,7 @@ import {
   Rocket,
   GraduationCap,
   HeadphonesIcon,
+  Phone,
 } from "lucide-react";
 
 const ICON_OPTIONS = [
@@ -23,6 +24,7 @@ const ICON_OPTIONS = [
   { value: "Rocket", label: "Внедрение", Icon: Rocket },
   { value: "GraduationCap", label: "Обучение", Icon: GraduationCap },
   { value: "HeadphonesIcon", label: "Поддержка", Icon: HeadphonesIcon },
+  { value: "Phone", label: "Консультация", Icon: Phone },
 ];
 
 const COLOR_PRESETS = [
@@ -32,6 +34,7 @@ const COLOR_PRESETS = [
   { value: "from-[#9e71bc] to-[#c487be]", label: "Розово-фиолетовый" },
   { value: "from-[#b782c0] to-[#c04880]", label: "Розовый" },
   { value: "from-[#5838a8] to-[#c04880]", label: "Градиент" },
+  { value: "from-[#c04880] to-[#e05a9c]", label: "Ярко-розовый" },
 ];
 
 export default function NewServicePage() {

@@ -18,6 +18,7 @@ import {
   Rocket,
   GraduationCap,
   HeadphonesIcon,
+  Phone,
 } from "lucide-react";
 import type { Service } from "@/lib/supabase/types";
 
@@ -27,6 +28,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Rocket,
   GraduationCap,
   HeadphonesIcon,
+  Phone,
 };
 
 export default function ServicesListPage() {
