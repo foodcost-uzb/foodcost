@@ -12,6 +12,7 @@ const footerLinks = {
     { label: "Внедрение", href: "#services" },
     { label: "Обучение", href: "#services" },
     { label: "Сопровождение", href: "#services" },
+    { label: "Консультация", href: "#services" },
   ],
   products: [
     { label: "BASE CONTROL", href: "#products" },

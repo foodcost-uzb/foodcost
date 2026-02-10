@@ -8,6 +8,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://foodcost.uz"),
   title: "FOODCOST — Консалтинг для ресторанного бизнеса",
   description:
     "Избавляем ресторанный бизнес от хаоса в управлении, учёте и финансах, делая владельцев успешными и свободными. 50+ лет общего стажа команды в HoReCa.",
@@ -32,20 +33,71 @@ export const metadata: Metadata = {
     siteName: "FOODCOST",
     locale: "ru_RU",
     type: "website",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "FOODCOST — Консалтинг для ресторанного бизнеса",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "FOODCOST — Консалтинг для ресторанного бизнеса",
     description:
       "Избавляем ресторанный бизнес от хаоса в управлении, учёте и финансах.",
+    images: ["/opengraph-image"],
   },
   icons: {
     icon: "/logo-icon.svg",
+    apple: "/logo-icon.svg",
   },
   robots: {
     index: true,
     follow: true,
   },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://foodcost.uz/#organization",
+      name: "FOODCOST",
+      url: "https://foodcost.uz",
+      logo: "https://foodcost.uz/logo-full.svg",
+      description:
+        "Избавляем ресторанный бизнес от хаоса в управлении, учёте и финансах, делая владельцев успешными и свободными.",
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: "+998998551110",
+        contactType: "customer service",
+        availableLanguage: ["Russian", "Uzbek"],
+      },
+      sameAs: [
+        "https://t.me/foodcost",
+        "https://www.youtube.com/@FoodCostGroup",
+      ],
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://foodcost.uz/#localbusiness",
+      name: "FOODCOST",
+      image: "https://foodcost.uz/logo-full.svg",
+      url: "https://foodcost.uz",
+      telephone: "+998998551110",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Ташкент",
+        addressCountry: "UZ",
+      },
+      priceRange: "$$",
+      description:
+        "Консалтинг для ресторанного бизнеса. Аудит, настройка, внедрение, обучение и сопровождение.",
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -55,6 +107,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" className="scroll-smooth">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className={`${inter.variable} antialiased`}>{children}</body>
     </html>
   );

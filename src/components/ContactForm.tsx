@@ -18,26 +18,33 @@ export default function ContactForm({ settings }: ContactFormProps) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError(false);
 
     try {
-      await fetch("/api/leads", {
+      const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...formData, source: "form" }),
       });
+
+      if (!res.ok) {
+        throw new Error("Request failed");
+      }
+
+      setIsSubmitted(true);
+      setFormData({ name: "", phone: "", email: "", message: "" });
+      setTimeout(() => setIsSubmitted(false), 5000);
     } catch {
-      // Silently fail — show success anyway for UX
+      setSubmitError(true);
+      setTimeout(() => setSubmitError(false), 5000);
     }
 
     setIsSubmitting(false);
-    setIsSubmitted(true);
-    setFormData({ name: "", phone: "", email: "", message: "" });
-
-    setTimeout(() => setIsSubmitted(false), 5000);
   };
 
   const handleChange = (
@@ -166,6 +173,34 @@ export default function ContactForm({ settings }: ContactFormProps) {
                   </h4>
                   <p className="text-slate-600">
                     Мы свяжемся с вами в ближайшее время.
+                  </p>
+                </motion.div>
+              ) : submitError ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-center py-12"
+                >
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg
+                      className="w-8 h-8 text-red-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </div>
+                  <h4 className="text-xl font-bold text-slate-900 mb-2">
+                    Ошибка отправки
+                  </h4>
+                  <p className="text-slate-600">
+                    Не удалось отправить заявку. Попробуйте ещё раз или свяжитесь с нами по телефону.
                   </p>
                 </motion.div>
               ) : (
