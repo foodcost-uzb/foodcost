@@ -310,6 +310,13 @@ git add . && git commit -m "описание" && git push
 
 ---
 
+## Favicon
+
+- SVG-иконка вкладки браузера: `src/app/icon.svg` (светлый логотип `logo-icon.svg` — буквы F и C)
+- Старый `favicon.ico` остаётся как fallback для старых браузеров
+
+---
+
 ## Статус: ПОЛНОСТЬЮ РЕАЛИЗОВАНО
 
 - Лендинг с данными из Supabase (`force-dynamic` SSR)
@@ -324,6 +331,7 @@ git add . && git commit -m "описание" && git push
 - Формы заявок → Supabase leads
 - Telegram-уведомления о новых заявках
 - Аналитика просмотров и событий
+- SVG favicon с логотипом FoodCost
 - Задеплоено на Vercel, домен foodcost.uz привязан
 
 ---
