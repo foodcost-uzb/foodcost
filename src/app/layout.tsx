@@ -39,6 +39,9 @@ export const metadata: Metadata = {
     description:
       "Избавляем ресторанный бизнес от хаоса в управлении, учёте и финансах.",
   },
+  icons: {
+    icon: "/logo-icon.svg",
+  },
   robots: {
     index: true,
     follow: true,
