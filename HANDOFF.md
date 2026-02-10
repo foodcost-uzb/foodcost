@@ -1,6 +1,6 @@
 # FOOD COST — Handoff документация
 
-**Дата обновления:** 8 февраля 2026
+**Дата обновления:** 10 февраля 2026
 
 ---
 
@@ -38,7 +38,7 @@
 
 | Сервис | Назначение | Детали |
 |--------|------------|--------|
-| **Vercel** | Хостинг (Next.js) | Ручной деплой (нет автодеплоя), serverless functions |
+| **Vercel** | Хостинг (Next.js) | Автодеплой через GitHub (push → main), serverless functions |
 | **Supabase** | База данных + Storage | Проект `eiulmeuhwlfkowwtenli`, регион `eu-central-1` |
 | **GitHub** | Репозиторий | `foodcost-uzb/foodcost` |
 | **Tomas.uz** | DNS | NS: `ns1.tomas.uz` |
@@ -137,7 +137,7 @@ src/
 | `services` | Услуги | 6 |
 | `products` | Тарифы/продукты | 3 |
 | `cases` | Кейсы | 3 |
-| `testimonials` | Отзывы (текст + видео, YouTube Shorts) | 7 |
+| `testimonials` | Отзывы (текст + видео, YouTube Shorts) | 8 |
 | `project_logos` | Логотипы проектов (marquee) | 36 |
 | `leads` | Заявки с сайта | динамически |
 | `site_settings` | Настройки сайта | 31 |
@@ -249,6 +249,7 @@ vercel deploy --prod --yes --token <VERCEL_TOKEN>
 Текущие видео-отзывы:
 - `RMFF5yRB_JI` — Отзыв о работе с FOOD COST
 - `eegQdfusD3c` — Результаты сотрудничества с FOOD COST
+- `LtB-Y47p9vA` — Отзыв клиента о сотрудничестве (Владелец проектов OKO, OBLAKO LOUNGE, ВМЯСО)
 
 ---
 
@@ -297,11 +298,12 @@ vercel deploy --prod --yes --token <VERCEL_TOKEN>
 
 ## Деплой на Vercel
 
-**Автодеплой НЕ настроен** — на GitHub репозитории нет вебхуков Vercel.
+**Автодеплой настроен** — при `git push` в `main` Vercel автоматически собирает и деплоит.
 
-Для деплоя:
 ```bash
-vercel deploy --prod --yes --token <VERCEL_TOKEN>
+# Обычный процесс деплоя:
+git add . && git commit -m "описание" && git push
+# Vercel подхватит автоматически
 ```
 
 Главная страница использует `export const dynamic = "force-dynamic"` для SSR — данные из Supabase всегда актуальны.
@@ -326,4 +328,4 @@ vercel deploy --prod --yes --token <VERCEL_TOKEN>
 
 ---
 
-*Обновлено: 8 февраля 2026*
+*Обновлено: 10 февраля 2026*
