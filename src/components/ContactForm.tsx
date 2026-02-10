@@ -206,54 +206,61 @@ export default function ContactForm({ settings }: ContactFormProps) {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label htmlFor="cf-name" className="block text-sm font-medium text-slate-700 mb-2">
                       Ваше имя
                     </label>
                     <input
+                      id="cf-name"
                       type="text"
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
                       required
+                      autoComplete="name"
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#5838a8] focus:border-transparent outline-none transition-all"
                       placeholder="Введите ваше имя"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label htmlFor="cf-phone" className="block text-sm font-medium text-slate-700 mb-2">
                       Телефон
                     </label>
                     <input
+                      id="cf-phone"
                       type="tel"
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
                       required
+                      autoComplete="tel"
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#5838a8] focus:border-transparent outline-none transition-all"
                       placeholder="+998 90 123 45 67"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label htmlFor="cf-email" className="block text-sm font-medium text-slate-700 mb-2">
                       Email
                     </label>
                     <input
+                      id="cf-email"
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
+                      autoComplete="email"
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#5838a8] focus:border-transparent outline-none transition-all"
                       placeholder="example@email.com"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label htmlFor="cf-message" className="block text-sm font-medium text-slate-700 mb-2">
                       Сообщение
                     </label>
                     <textarea
+                      id="cf-message"
                       name="message"
                       value={formData.message}
                       onChange={handleChange}

@@ -60,7 +60,6 @@ export default function Logo({ className = "", size = "md", variant = "horizonta
         width={width}
         height={height}
         className={className}
-        priority
       />
     );
   }
@@ -74,7 +73,6 @@ export default function Logo({ className = "", size = "md", variant = "horizonta
         width={width}
         height={height}
         className={className}
-        priority
       />
     );
   }

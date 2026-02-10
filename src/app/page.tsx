@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
@@ -43,7 +43,7 @@ export default async function Home() {
 
   return (
     <SettingsProvider settings={settingsMap as Record<string, string> & { contact_phone: string; contact_phone_display: string; contact_email: string; contact_address: string; contact_telegram: string; contact_youtube: string; podcast_title: string; podcast_description: string; podcast_video_id: string; podcast_youtube_url: string }}>
-      <main className="min-h-screen">
+      <main id="main-content" className="min-h-screen">
         <Header />
         <Hero settings={settingsMap} />
         <Services services={services && services.length > 0 ? services : undefined} />

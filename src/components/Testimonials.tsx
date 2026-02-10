@@ -103,6 +103,7 @@ export default function Testimonials({ testimonials: testimonialsProp }: Testimo
                       src={video.thumbnail || `https://img.youtube.com/vi/${video.video_id}/hqdefault.jpg`}
                       alt={video.video_title || ""}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
                     />
                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
 
@@ -202,6 +203,7 @@ export default function Testimonials({ testimonials: testimonialsProp }: Testimo
                       src={testimonial.avatar || ""}
                       alt={testimonial.name}
                       className="w-12 h-12 rounded-full object-cover ring-2 ring-[#5838a8]/20"
+                      loading="lazy"
                     />
                     <div>
                       <div className="font-semibold text-white">

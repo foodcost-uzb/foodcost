@@ -53,6 +53,9 @@ export const metadata: Metadata = {
     icon: "/logo-icon.svg",
     apple: "/logo-icon.svg",
   },
+  alternates: {
+    canonical: "https://foodcost.uz",
+  },
   robots: {
     index: true,
     follow: true,
@@ -113,7 +116,12 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${inter.variable} antialiased`}>{children}</body>
+      <body className={`${inter.variable} antialiased`}>
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-4 focus:left-4 focus:bg-[#5838a8] focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">
+          Перейти к содержимому
+        </a>
+        {children}
+      </body>
     </html>
   );
 }

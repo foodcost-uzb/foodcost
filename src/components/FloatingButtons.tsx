@@ -45,6 +45,7 @@ export default function FloatingButtons() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0 }}
             onClick={scrollToTop}
+            aria-label="Наверх"
             className="w-12 h-12 bg-[#1a1a2e] text-white rounded-full shadow-lg flex items-center justify-center hover:bg-[#5838a8] transition-colors"
           >
             <ArrowUp size={20} />
@@ -58,6 +59,7 @@ export default function FloatingButtons() {
           animate="animate"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
+          aria-label="Заказать обратный звонок"
           className="w-14 h-14 bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white rounded-full shadow-lg shadow-[#5838a8]/30 flex items-center justify-center hover:shadow-xl transition-shadow"
         >
           <PhoneCall size={24} />
@@ -70,6 +72,7 @@ export default function FloatingButtons() {
           animate="animate"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
+          aria-label="Позвонить"
           className="w-14 h-14 bg-[#5838a8] text-white rounded-full shadow-lg shadow-[#5838a8]/30 flex items-center justify-center hover:bg-[#7c5cc9] transition-colors"
         >
           <Phone size={24} />
@@ -84,6 +87,7 @@ export default function FloatingButtons() {
           animate="animate"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
+          aria-label="Написать в Telegram"
           className="w-14 h-14 bg-blue-500 text-white rounded-full shadow-lg shadow-blue-500/30 flex items-center justify-center hover:bg-blue-600 transition-colors animate-pulse-glow"
         >
           <Send size={24} />

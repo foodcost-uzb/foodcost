@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Phone, Loader2, CheckCircle } from "lucide-react";
 
 interface CallbackModalProps {
@@ -14,30 +14,46 @@ export default function CallbackModal({ isOpen, onClose }: CallbackModalProps) {
   const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError(false);
 
     try {
-      await fetch("/api/leads", {
+      const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, phone, source: "callback" }),
       });
+
+      if (!res.ok) {
+        throw new Error("Request failed");
+      }
+
+      setIsSubmitted(true);
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setPhone("");
+        setName("");
+        onClose();
+      }, 2000);
     } catch {
-      // Silently fail
+      setSubmitError(true);
+      setTimeout(() => setSubmitError(false), 5000);
     }
 
     setIsSubmitting(false);
-    setIsSubmitted(true);
-
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setPhone("");
-      setName("");
-      onClose();
-    }, 2000);
   };
 
   return (
@@ -64,6 +80,7 @@ export default function CallbackModal({ isOpen, onClose }: CallbackModalProps) {
               {/* Close button */}
               <button
                 onClick={onClose}
+                aria-label="Закрыть"
                 className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 transition-colors"
               >
                 <X size={24} />
@@ -85,6 +102,22 @@ export default function CallbackModal({ isOpen, onClose }: CallbackModalProps) {
                     Мы перезвоним вам в ближайшее время
                   </p>
                 </motion.div>
+              ) : submitError ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-center py-8"
+                >
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <X className="w-8 h-8 text-red-500" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">
+                    Ошибка отправки
+                  </h3>
+                  <p className="text-slate-600">
+                    Не удалось отправить заявку. Попробуйте ещё раз.
+                  </p>
+                </motion.div>
               ) : (
                 <>
                   {/* Header */}
@@ -103,28 +136,32 @@ export default function CallbackModal({ isOpen, onClose }: CallbackModalProps) {
                   {/* Form */}
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                      <label htmlFor="cb-name" className="block text-sm font-medium text-slate-700 mb-2">
                         Ваше имя
                       </label>
                       <input
+                        id="cb-name"
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
+                        autoComplete="name"
                         className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#5838a8] focus:border-transparent outline-none transition-all"
                         placeholder="Как к вам обращаться?"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                      <label htmlFor="cb-phone" className="block text-sm font-medium text-slate-700 mb-2">
                         Номер телефона
                       </label>
                       <input
+                        id="cb-phone"
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         required
+                        autoComplete="tel"
                         className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#5838a8] focus:border-transparent outline-none transition-all"
                         placeholder="+998 90 123 45 67"
                       />

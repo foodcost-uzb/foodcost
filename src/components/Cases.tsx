@@ -55,6 +55,7 @@ export default function Cases({ cases: casesProp }: CasesProps) {
           >
             <button
               onClick={() => setSelectedCase(null)}
+              aria-label="Закрыть"
               className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center transition-colors"
             >
               <X size={20} className="text-white" />
@@ -66,6 +67,7 @@ export default function Cases({ cases: casesProp }: CasesProps) {
                 src={selectedCase.image}
                 alt={selectedCase.title}
                 className="w-full h-full object-cover"
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
               <div className="absolute bottom-4 left-6 text-white">
@@ -145,6 +147,7 @@ export default function Cases({ cases: casesProp }: CasesProps) {
                   src={item.image}
                   alt={item.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                 <div className="absolute bottom-4 left-4 text-white">

@@ -28,6 +28,7 @@ export default function Calculator() {
     const target = parseFloat(targetFoodCost) || 0;
 
     if (rev === 0 || current === 0 || target === 0) return null;
+    if (target >= current) return null;
 
     const currentCost = (rev * current) / 100;
     const targetCost = (rev * target) / 100;
@@ -143,6 +144,13 @@ export default function Calculator() {
                   />
                 </div>
               </div>
+
+              {/* Validation hint */}
+              {parseFloat(currentFoodCost) > 0 && parseFloat(targetFoodCost) > 0 && parseFloat(targetFoodCost) >= parseFloat(currentFoodCost) && (
+                <p className="mt-3 text-sm text-red-500">
+                  Целевой food cost должен быть ниже текущего
+                </p>
+              )}
 
               {/* Results */}
               {savings && (

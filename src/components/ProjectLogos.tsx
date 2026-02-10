@@ -91,6 +91,7 @@ export default function ProjectLogos({ projects: projectsProp }: ProjectLogosPro
           alt={project.name}
           className="max-h-full max-w-full object-contain pointer-events-none select-none"
           draggable={false}
+          loading="lazy"
         />
       </div>
     );
