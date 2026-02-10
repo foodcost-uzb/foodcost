@@ -93,7 +93,7 @@ export default function Hero({ settings }: HeroProps) {
             {[
               { icon: Users, value: s.hero_stat_1_value || "50+", label: s.hero_stat_1_label || "Лет общего стажа команды" },
               { icon: Award, value: s.hero_stat_2_value || "100+", label: s.hero_stat_2_label || "Успешных проектов" },
-              { icon: Zap, value: s.hero_stat_3_value || "24/7", label: s.hero_stat_3_label || "Поддержка клиентов" },
+              { icon: Zap, value: s.hero_stat_3_value || "5+", label: s.hero_stat_3_label || "Лет на рынке" },
             ].map((stat, index) => (
               <motion.div
                 key={stat.label}
