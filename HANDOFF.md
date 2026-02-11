@@ -14,7 +14,7 @@
 | **Vercel URL** | https://foodcost-three.vercel.app |
 | **GitHub** | https://github.com/foodcost-uzb/foodcost |
 | **Админ-панель** | https://foodcost.uz/admin/login |
-| **Админ логин** | admin / admin123 |
+| **Админ логин** | admin / (пароль изменён, не дефолтный) |
 
 ---
 
@@ -73,12 +73,18 @@ TELEGRAM_CHAT_ID=<chat id for notifications>
 src/
 ├── app/
 │   ├── globals.css          # Глобальные стили, CSS-переменные
-│   ├── layout.tsx           # Корневой layout с метаданными
-│   ├── page.tsx             # Главная (async server component → Supabase)
+│   ├── layout.tsx           # Корневой layout с метаданными, JSON-LD, skip-to-content
+│   ├── page.tsx             # Главная (ISR revalidate=60, server component → Supabase)
+│   ├── not-found.tsx        # Кастомная 404 страница
+│   ├── error.tsx            # Error boundary с кнопкой retry
+│   ├── robots.ts            # robots.txt (Disallow /admin/, Sitemap)
+│   ├── sitemap.ts           # sitemap.xml
+│   ├── opengraph-image.tsx  # OG-картинка 1200x630 (edge runtime)
 │   ├── admin/
 │   │   ├── login/           # Страница входа (минимальный layout)
 │   │   └── (protected)/     # Защищённые страницы админки
 │   │       ├── page.tsx         # Дашборд (KPI, график, лиды)
+│   │       ├── loading.tsx      # Спиннер загрузки для роутов
 │   │       ├── content/         # CRUD: услуги, продукты, кейсы, отзывы, проекты
 │   │       ├── leads/           # Управление заявками
 │   │       ├── analytics/       # Просмотры, события, конверсия
@@ -86,25 +92,26 @@ src/
 │   └── api/
 │       ├── auth/            # Login, logout, session check
 │       ├── content/         # CRUD: services, products, cases, testimonials, projects
-│       ├── leads/           # Приём заявок (public) + управление (admin)
+│       ├── leads/           # Приём заявок (public, с валидацией) + управление (admin)
 │       ├── settings/        # Настройки сайта + калькулятора
-│       ├── analytics/       # Трекинг просмотров/событий + агрегация
+│       ├── analytics/       # Трекинг просмотров/событий (anon client) + агрегация
 │       └── upload/          # Загрузка изображений в Supabase Storage
 ├── components/
-│   ├── Header.tsx           # Навигация + телефон + Telegram
+│   ├── Header.tsx           # Навигация + телефон + Telegram (aria-label на burger)
 │   ├── Hero.tsx             # Hero-секция (props из настроек)
 │   ├── Services.tsx         # Bento-grid услуг + модальные окна
 │   ├── Products.tsx         # Тарифы + модальные окна
 │   ├── About.tsx            # О компании (props из настроек)
-│   ├── Cases.tsx            # Кейсы + модальные окна
+│   ├── Cases.tsx            # Кейсы + модальные окна (lazy loading images)
 │   ├── ProjectLogos.tsx     # Бегущая строка логотипов проектов (marquee)
-│   ├── Calculator.tsx       # Интерактивный калькулятор food cost
-│   ├── Testimonials.tsx     # Отзывы: текст + видео
+│   ├── Calculator.tsx       # Интерактивный калькулятор food cost (валидация target < current)
+│   ├── Testimonials.tsx     # Отзывы: текст + видео (lazy loading)
 │   ├── Podcast.tsx          # Подкаст (YouTube embed)
-│   ├── ContactForm.tsx      # Форма → POST /api/leads
-│   ├── CallbackModal.tsx    # Модалка обратного звонка → POST /api/leads
+│   ├── ContactForm.tsx      # Форма → POST /api/leads (показывает ошибку при сбое)
+│   ├── CallbackModal.tsx    # Модалка обратного звонка (scroll lock, ошибки, aria-label)
 │   ├── Footer.tsx           # Подвал (контакты, соцсети)
-│   ├── FloatingButtons.tsx  # Плавающие кнопки: звонок, телефон, Telegram
+│   ├── FloatingButtons.tsx  # Плавающие кнопки: звонок, телефон, Telegram (aria-labels)
+│   ├── Logo.tsx             # Лого (priority только для header, lazy для footer)
 │   ├── AnalyticsTracker.tsx # Автотрекинг просмотров
 │   └── admin/
 │       ├── AdminSidebar.tsx # Боковая навигация админки
@@ -136,9 +143,9 @@ src/
 | `admin_users` | Администраторы | 1 |
 | `services` | Услуги | 6 |
 | `products` | Тарифы/продукты | 3 |
-| `cases` | Кейсы | 3 |
-| `testimonials` | Отзывы (текст + видео, YouTube Shorts) | 8 |
-| `project_logos` | Логотипы проектов (marquee) | 36 |
+| `cases` | Кейсы | 8 (active) |
+| `testimonials` | Отзывы (текст + видео, YouTube Shorts) | 3 |
+| `project_logos` | Логотипы проектов (marquee) | 35 |
 | `leads` | Заявки с сайта | динамически |
 | `site_settings` | Настройки сайта | 31 |
 | `calculator_settings` | Настройки калькулятора | 1 |
@@ -156,7 +163,7 @@ src/
 | **API** | `POST /api/upload` (multipart/form-data, admin only) |
 
 ### RLS и доступ
-- Публичные INSERT (leads, analytics) — через service role в API routes
+- Публичные INSERT (leads, analytics) — через anon client в API routes
 - Публичные SELECT (контент, настройки) — через anon key
 - Админ-операции — через service role key
 - Загрузка файлов — через service role (Supabase Storage)
@@ -167,7 +174,36 @@ src/
 
 - **Логин:** username + password → bcrypt → JWT в httpOnly cookie (`admin_session`, 24h)
 - **Защита:** `verifyAdmin()` в protected layout и API routes
-- **Дефолтный аккаунт:** admin / admin123
+- **Пароль изменён** с дефолтного (seed) на пользовательский
+
+---
+
+## SEO и метаданные
+
+| Элемент | Реализация |
+|---------|------------|
+| **metadataBase** | `https://foodcost.uz` |
+| **Canonical URL** | `alternates.canonical` в layout.tsx |
+| **OG Image** | `opengraph-image.tsx` (edge runtime, 1200x630, брендовые цвета) |
+| **Twitter Card** | `summary_large_image` |
+| **JSON-LD** | Organization + LocalBusiness Schema.org в `<head>` |
+| **Apple Touch Icon** | `/logo-icon.svg` |
+| **robots.txt** | `Disallow: /admin/`, `Sitemap: .../sitemap.xml` |
+| **sitemap.xml** | Только главная страница (SPA с hash-секциями) |
+| **Skip-to-content** | `<a href="#main-content">` (sr-only) |
+
+---
+
+## Безопасность
+
+| Мера | Реализация |
+|------|------------|
+| **Security headers** | X-Frame-Options DENY, X-Content-Type-Options nosniff, Referrer-Policy strict-origin-when-cross-origin, Permissions-Policy (camera, mic, geo = none) |
+| **X-Powered-By** | Отключён (`poweredByHeader: false`) |
+| **Input validation** | Лимиты длины (name 200, phone 30, email 200, message 2000), whitelist source |
+| **SQL injection** | Sanitized search в leads GET (удаление спецсимволов PostgREST) |
+| **HTML injection** | Экранирование `<>&` в Telegram-уведомлениях |
+| **Analytics** | Использует anon client (не service role) |
 
 ---
 
@@ -190,7 +226,7 @@ src/
 
 | Канал | Значение |
 |-------|----------|
-| Телефон | +998998551110 |
+| Телефон | +998 99 855 11 10 |
 | Telegram | https://t.me/foodcost_uzb |
 | YouTube | https://www.youtube.com/@FoodCostGroup |
 | Email | info@foodcost.uz |
@@ -207,7 +243,7 @@ WhatsApp убран — используется только Telegram.
 |----------|----------|
 | **Бот** | @callback_fo_bot ("FOOD COST ЗАЯВКИ") |
 | **Получатель** | Рустам Рахманбердиев (@rustam_foodcost, chat_id: 278977157) |
-| **Формат** | HTML: имя, телефон, email, сообщение, источник |
+| **Формат** | HTML: имя, телефон, email, сообщение, источник (с экранированием) |
 | **Реализация** | `src/app/api/leads/route.ts` — non-blocking fetch после сохранения в БД |
 
 Для смены получателя: обновить `TELEGRAM_CHAT_ID` в `.env.local` и Vercel.
@@ -229,9 +265,45 @@ npm run build
 # Продакшн
 npm start
 
-# Деплой на Vercel (автодеплой не настроен, нужен ручной)
-vercel deploy --prod --yes --token <VERCEL_TOKEN>
+# Ручной деплой на Vercel
+npx vercel --prod
 ```
+
+---
+
+## Кэширование и производительность
+
+| Аспект | Реализация |
+|--------|------------|
+| **ISR** | Главная страница: `revalidate = 60` (обновление раз в 60 сек) |
+| **Lazy loading** | Все изображения ниже фолда: `loading="lazy"` |
+| **Image priority** | Только header-лого (`Logo` horizontal variant) |
+| **Static pages** | robots.txt, sitemap.xml, 404, admin/login — статические |
+
+---
+
+## Обработка ошибок
+
+| Элемент | Файл | Описание |
+|---------|------|----------|
+| **Error boundary** | `src/app/error.tsx` | Ловит ошибки рендера, кнопка «Попробовать снова» |
+| **404 страница** | `src/app/not-found.tsx` | Кастомная 404 с брендовым дизайном |
+| **Admin loading** | `src/app/admin/(protected)/loading.tsx` | Спиннер при переходе между страницами |
+| **ContactForm** | Показывает ошибку при сбое API (не молча «Спасибо») |
+| **CallbackModal** | Показывает ошибку при сбое API + scroll lock |
+
+---
+
+## Accessibility (a11y)
+
+| Элемент | Реализация |
+|---------|------------|
+| **Skip-to-content** | `<a href="#main-content">` в layout (sr-only, видима при фокусе) |
+| **aria-label** | Hamburger menu, scroll-to-top, callback, phone, telegram, close buttons |
+| **aria-expanded** | Mobile menu toggle |
+| **Form labels** | `htmlFor`/`id` связь label↔input, `autoComplete` атрибуты |
+| **Scroll lock** | `document.body.style.overflow = "hidden"` при открытом CallbackModal |
+| **Semantic HTML** | `<header>`, `<nav>`, `<main>`, `<section>`, `<footer>` |
 
 ---
 
@@ -280,12 +352,6 @@ vercel deploy --prod --yes --token <VERCEL_TOKEN>
 | **Drag-to-scroll** | При наведении можно перетаскивать ленту мышью |
 | **Админ-панель** | Контент → Проекты (CRUD + загрузка логотипов) |
 
-Особенности реализации:
-- Два дублированных набора логотипов для бесшовного цикла
-- `useRef` измеряет реальную половину ширины трека → CSS-переменная `--marquee-distance`
-- Pointer events API для drag-to-scroll (пауза анимации при перетаскивании)
-- Градиентные маски по краям для плавного перехода
-
 ---
 
 ## Калькулятор
@@ -293,6 +359,7 @@ vercel deploy --prod --yes --token <VERCEL_TOKEN>
 - Поле «Выручка» поддерживает форматирование чисел с разделителями (пробелы): `100 000 000`
 - `type="text" inputMode="numeric"` для мобильной клавиатуры
 - `formatNumber()` добавляет пробелы как разделители тысяч
+- Валидация: целевой food cost должен быть ниже текущего (иначе подсказка)
 
 ---
 
@@ -304,22 +371,26 @@ vercel deploy --prod --yes --token <VERCEL_TOKEN>
 # Обычный процесс деплоя:
 git add . && git commit -m "описание" && git push
 # Vercel подхватит автоматически
+
+# Или ручной деплой:
+npx vercel --prod
 ```
 
-Главная страница использует `export const dynamic = "force-dynamic"` для SSR — данные из Supabase всегда актуальны.
+Главная страница использует ISR (`revalidate = 60`) — данные из Supabase обновляются раз в минуту.
 
 ---
 
 ## Favicon
 
-- SVG-иконка вкладки браузера: `src/app/icon.svg` (светлый логотип `logo-icon.svg` — буквы F и C)
-- Старый `favicon.ico` остаётся как fallback для старых браузеров
+- SVG-иконка вкладки браузера: `/logo-icon.svg` (буквы F и C)
+- Apple touch icon: `/logo-icon.svg`
+- Старый `favicon.ico` удалён
 
 ---
 
 ## Статус: ПОЛНОСТЬЮ РЕАЛИЗОВАНО
 
-- Лендинг с данными из Supabase (`force-dynamic` SSR)
+- Лендинг с данными из Supabase (ISR, revalidate=60)
 - Админ-панель (CRUD, лиды, аналитика, настройки)
 - Загрузка изображений в админке (drag & drop → Supabase Storage)
 - Модальные окна для "Подробнее" (услуги, продукты, кейсы)
@@ -327,11 +398,16 @@ git add . && git commit -m "описание" && git push
 - 6 услуг (включая «Консультация»)
 - Видео-отзывы с поддержкой YouTube Shorts
 - Цены на карточках продуктов (пакетов)
-- Калькулятор с форматированием чисел
-- Формы заявок → Supabase leads
-- Telegram-уведомления о новых заявках
+- Калькулятор с форматированием чисел и валидацией
+- Формы заявок → Supabase leads (с показом ошибок)
+- Telegram-уведомления о новых заявках (с экранированием HTML)
 - Аналитика просмотров и событий
 - SVG favicon с логотипом FoodCost
+- SEO: OG image, JSON-LD, canonical, robots.txt, sitemap.xml
+- Security headers (X-Frame-Options, CSP-lite, etc.)
+- Accessibility: skip-to-content, aria-labels, form labels, scroll lock
+- Error boundary, кастомная 404, loading states
+- Input validation и sanitization на API routes
 - Задеплоено на Vercel, домен foodcost.uz привязан
 
 ---
