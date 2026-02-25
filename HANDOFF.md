@@ -215,7 +215,7 @@ src/
 | `src/lib/gtag.ts` | GA4: 14 функций трекинга (pageview, form_submit, phone_click, telegram_click, calculator_started/completed, case_study_view, video_view, cta_click, section_view, service_view, product_view) |
 | `src/lib/meta-pixel.ts` | Meta Pixel: 9 функций (PageView, Lead, Contact, ViewContent, Schedule, CalculatorStarted/Completed, VideoView, CtaClick) |
 | `src/lib/utm.ts` | Захват UTM-меток из URL → sessionStorage + localStorage |
-| `src/lib/analytics.ts` | Внутренний трекинг → Supabase (page_views, analytics_events) |
+| `src/lib/analytics.ts` | Внутренний трекинг → Supabase (page_views, analytics_events), сессия в localStorage с 30-мин TTL |
 | `src/components/ThirdPartyScripts.tsx` | Загрузчик GA4 + Meta Pixel скриптов (afterInteractive), UTM capture |
 | `src/components/AnalyticsTracker.tsx` | Трекинг просмотров + IntersectionObserver для 8 секций |
 
@@ -277,12 +277,14 @@ src/
 
 | Мера | Реализация |
 |------|------------|
-| **Security headers** | X-Frame-Options DENY, X-Content-Type-Options nosniff, Referrer-Policy strict-origin-when-cross-origin, Permissions-Policy (camera, mic, geo = none) |
+| **Security headers** | X-Frame-Options DENY, X-Content-Type-Options nosniff, Referrer-Policy strict-origin-when-cross-origin, Permissions-Policy (camera, mic, geo = none), **Strict-Transport-Security** (HSTS, max-age 2 года) |
 | **X-Powered-By** | Отключён (`poweredByHeader: false`) |
 | **Input validation** | Лимиты длины (name 200, phone 30, email 200, message 2000), whitelist source |
+| **Analytics track validation** | Проверка type, page, event_name; обрезка строк (page 500, referrer 1000, session_id 100); try/catch для JSON |
+| **Leads PUT whitelist** | Только `status` и `notes` разрешены для обновления (защита от mass-assignment) |
 | **SQL injection** | Sanitized search в leads GET (удаление спецсимволов PostgREST) |
 | **HTML injection** | Экранирование `<>&` в Telegram-уведомлениях |
-| **Analytics** | Использует anon client (не service role) |
+| **Analytics** | Использует anon client (не service role), лимит 50000 строк на запрос |
 
 ---
 
@@ -381,7 +383,7 @@ npx vercel --prod
 | **Skip-to-content** | `<a href="#main-content">` в layout (sr-only, видима при фокусе) |
 | **aria-label** | Hamburger menu, scroll-to-top, callback, phone, telegram, close buttons |
 | **aria-expanded** | Mobile menu toggle |
-| **Form labels** | `htmlFor`/`id` связь label↔input, `autoComplete` атрибуты |
+| **Form labels** | `htmlFor`/`id` связь label↔input, `autoComplete` атрибуты (ContactForm, CallbackModal, Calculator, Admin Login) |
 | **Scroll lock** | `document.body.style.overflow = "hidden"` при открытом CallbackModal |
 | **Semantic HTML** | `<header>`, `<nav>`, `<main>`, `<section>`, `<footer>` |
 
@@ -431,6 +433,46 @@ npx vercel --prod
 | **Скорость** | ~200px/сек (динамически рассчитывается) |
 | **Drag-to-scroll** | При наведении можно перетаскивать ленту мышью |
 | **Админ-панель** | Контент → Проекты (CRUD + загрузка логотипов) |
+
+---
+
+## Аналитический дашборд (`/admin/analytics`)
+
+Детальная аналитика с 11 визуальными секциями. Данные из 3 таблиц Supabase: `page_views`, `analytics_events`, `leads`.
+
+### API (`/api/analytics`)
+
+Возвращает 16 полей. Оптимизирован: `select()` только нужных колонок, `.limit(50000)`, try/catch.
+
+| Поле | Описание |
+|------|----------|
+| `totalViews`, `totalUnique`, `totalEvents`, `totalLeads`, `conversionRate` | KPI |
+| `dailyStats` | Просмотры, уникальные, события, заявки по дням |
+| `trafficSources` | Группировка referrer (Google, Яндекс, Telegram, ВКонтакте, Прямой заход...) |
+| `devices` | Парсинг user_agent (Десктоп, Мобильный, Планшет) |
+| `eventsByCategory` | Конверсии, Контакты, Вовлечённость, Навигация |
+| `leadsBySource` | Группировка по source (form, callback, calculator) |
+| `utmCampaigns` | Из leads.utm_data: source + medium + campaign |
+| `funnel` | 5 шагов: Просмотры → Секции → CTA → Форма → Заявка |
+| `recentEvents` | Последние 50 событий с event_data |
+| `hourlyActivity` | Просмотры по часам (0-23) |
+| `topPages`, `eventCounts` | Топ-10 страниц, счётчики событий |
+
+### Секции дашборда
+
+1. **KPI-карточки** (5 шт) — просмотры, уникальные, события, заявки, конверсия
+2. **Динамика по дням** — двойной bar chart (просмотры + заявки) с tooltip
+3. **Воронка конверсии** — горизонтальные bars с % от предыдущего шага
+4. **Устройства** — progress bars с иконками и процентами
+5. **Источники трафика** — progress bars с процентами
+6. **Источники заявок** — зелёные bars
+7. **Активность по часам** — 24-ячеечный heat bar
+8. **UTM-кампании** — таблица (скрыта если нет данных)
+9. **События по категориям** — табы с bar charts
+10. **Популярные страницы** — топ-10
+11. **Последние события** — timeline с раскрытием event_data
+
+Переключатель периодов: 7 / 30 / 90 дней.
 
 ---
 
@@ -485,7 +527,7 @@ NEXT_PUBLIC_META_PIXEL_ID=860134220787360
 - 6 услуг (включая «Консультация»)
 - Видео-отзывы с поддержкой YouTube Shorts
 - Цены на карточках продуктов (пакетов)
-- Калькулятор с форматированием чисел и валидацией
+- Калькулятор с форматированием чисел, валидацией и ограничениями (min/max 0-100%)
 - Формы заявок → Supabase leads (с показом ошибок + UTM-метки)
 - Telegram-уведомления о новых заявках (с экранированием HTML)
 - **Google Analytics 4** — полный трекинг конверсий (14 типов событий)
@@ -495,10 +537,11 @@ NEXT_PUBLIC_META_PIXEL_ID=860134220787360
 - Детальная аналитика (Supabase): KPI, динамика, воронка конверсии, устройства, источники трафика, источники заявок, активность по часам, UTM-кампании, события по категориям, последние события
 - SVG favicon с логотипом FoodCost
 - SEO: OG image, JSON-LD (8 schemas), canonical, robots.txt, sitemap.xml, verification
-- Security headers (X-Frame-Options, CSP-lite, etc.)
+- Security headers (X-Frame-Options, HSTS, nosniff, Referrer-Policy, Permissions-Policy)
 - Accessibility: skip-to-content, aria-labels, form labels, scroll lock
 - Error boundary, кастомная 404, loading states
-- Input validation и sanitization на API routes
+- Input validation и sanitization на API routes (analytics track: type/name/length, leads PUT: field whitelist)
+- Admin-панель: try/catch + res.ok проверки на всех fetch-запросах
 - Задеплоено на Vercel, домен foodcost.uz привязан
 
 ---
