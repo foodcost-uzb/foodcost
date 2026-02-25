@@ -33,23 +33,6 @@ export default function ProjectLogos({ projects: projectsProp }: ProjectLogosPro
   const dragMoved = useRef(false);
   const [halfWidth, setHalfWidth] = useState(0);
 
-  // Measure the width of the first set of logos
-  useEffect(() => {
-    const measure = () => {
-      if (firstHalfRef.current) {
-        setHalfWidth(firstHalfRef.current.scrollWidth);
-      }
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [projects]);
-
-  if (projects.length === 0) return null;
-
-  // Speed: ~200px per second
-  const duration = halfWidth > 0 ? halfWidth / 200 : 30;
-
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     const el = trackRef.current;
     if (!el) return;
@@ -82,6 +65,23 @@ export default function ProjectLogos({ projects: projectsProp }: ProjectLogosPro
       e.stopPropagation();
     }
   }, []);
+
+  // Measure the width of the first set of logos
+  useEffect(() => {
+    const measure = () => {
+      if (firstHalfRef.current) {
+        setHalfWidth(firstHalfRef.current.scrollWidth);
+      }
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [projects]);
+
+  if (projects.length === 0) return null;
+
+  // Speed: ~200px per second
+  const duration = halfWidth > 0 ? halfWidth / 200 : 30;
 
   const LogoItem = ({ project }: { project: ProjectLogoData }) => {
     const content = (

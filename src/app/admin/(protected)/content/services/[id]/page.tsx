@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -40,7 +40,6 @@ const COLOR_PRESETS = [
 ];
 
 export default function EditServicePage() {
-  const router = useRouter();
   const params = useParams();
   const id = params.id as string;
 

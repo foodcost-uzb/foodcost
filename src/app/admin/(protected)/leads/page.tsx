@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Search, Filter, Loader2, Trash2, Phone, Mail, MessageSquare, Clock } from "lucide-react";
 
 interface Lead {
@@ -41,37 +41,49 @@ export default function LeadsPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sourceFilter, setSourceFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [editingNotes, setEditingNotes] = useState<string | null>(null);
   const [notesValue, setNotesValue] = useState("");
 
-  const fetchLeads = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (statusFilter !== "all") params.set("status", statusFilter);
-      if (sourceFilter !== "all") params.set("source", sourceFilter);
-      if (search) params.set("search", search);
+  // Reload trigger — increment to re-fetch from event handlers
+  const [reloadKey, setReloadKey] = useState(0);
+  const reload = useCallback(() => setReloadKey(k => k + 1), []);
 
-      const res = await fetch(`/api/leads?${params}`);
-      if (res.ok) {
-        const data = await res.json();
-        setLeads(Array.isArray(data) ? data : []);
-      } else {
-        setLeads([]);
-      }
-    } catch {
-      setLeads([]);
-    }
-    setLoading(false);
-  };
+  // Build query URL
+  const buildQuery = useCallback(() => {
+    const params = new URLSearchParams();
+    if (statusFilter !== "all") params.set("status", statusFilter);
+    if (sourceFilter !== "all") params.set("source", sourceFilter);
+    if (searchTerm) params.set("search", searchTerm);
+    return `/api/leads?${params}`;
+  }, [statusFilter, sourceFilter, searchTerm]);
 
+  // Fetch leads — setState only in async callbacks (React 19 safe)
   useEffect(() => {
-    fetchLeads();
-  }, [statusFilter, sourceFilter]);
+    let cancelled = false;
+    const url = buildQuery();
+
+    fetch(url)
+      .then(res => res.ok ? res.json() : [])
+      .then(data => {
+        if (!cancelled) {
+          setLeads(Array.isArray(data) ? data : []);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setLeads([]);
+          setLoading(false);
+        }
+      });
+
+    return () => { cancelled = true; };
+  }, [buildQuery, reloadKey]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchLeads();
+    setSearchTerm(search);
   };
 
   const updateStatus = async (id: string, status: string) => {
@@ -80,7 +92,7 @@ export default function LeadsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     });
-    fetchLeads();
+    reload();
   };
 
   const saveNotes = async (id: string) => {
@@ -90,13 +102,13 @@ export default function LeadsPage() {
       body: JSON.stringify({ notes: notesValue }),
     });
     setEditingNotes(null);
-    fetchLeads();
+    reload();
   };
 
   const deleteLead = async (id: string) => {
     if (!confirm("Удалить заявку?")) return;
     await fetch(`/api/leads/${id}`, { method: "DELETE" });
-    fetchLeads();
+    reload();
   };
 
   const formatDate = (date: string) => {
