@@ -308,7 +308,7 @@ src/
 | Канал | Значение |
 |-------|----------|
 | Телефон | +998 99 855 11 10 |
-| Telegram | https://t.me/foodcost_uzb |
+| Telegram | https://t.me/rustam_foodcost |
 | YouTube | https://www.youtube.com/@FoodCostGroup |
 | Email | info@foodcost.uz |
 
@@ -325,7 +325,7 @@ WhatsApp убран — используется только Telegram.
 | **Бот** | @callback_fo_bot ("FOOD COST ЗАЯВКИ") |
 | **Получатель** | Рустам Рахманбердиев (@rustam_foodcost, chat_id: 278977157) |
 | **Формат** | HTML: имя, телефон, email, сообщение, источник (с экранированием) |
-| **Реализация** | `src/app/api/leads/route.ts` — non-blocking fetch после сохранения в БД |
+| **Реализация** | `src/app/api/leads/route.ts` — `await fetch` после сохранения в БД (блокирующий, чтобы Vercel не убил запрос) |
 
 Для смены получателя: обновить `TELEGRAM_CHAT_ID` в `.env.local` и Vercel.
 
@@ -529,7 +529,7 @@ NEXT_PUBLIC_META_PIXEL_ID=860134220787360
 - Цены на карточках продуктов (пакетов)
 - Калькулятор с форматированием чисел, валидацией и ограничениями (min/max 0-100%)
 - Формы заявок → Supabase leads (с показом ошибок + UTM-метки)
-- Telegram-уведомления о новых заявках (с экранированием HTML)
+- Telegram-уведомления о новых заявках (`await fetch` — гарантированная доставка, с экранированием HTML)
 - **Google Analytics 4** — полный трекинг конверсий (14 типов событий)
 - **Meta Pixel** — трекинг конверсий для Facebook/Instagram рекламы (9 типов событий)
 - **UTM-метки** — захват, хранение, передача с лидами
@@ -542,6 +542,7 @@ NEXT_PUBLIC_META_PIXEL_ID=860134220787360
 - Error boundary, кастомная 404, loading states
 - Input validation и sanitization на API routes (analytics track: type/name/length, leads PUT: field whitelist)
 - Admin-панель: try/catch + res.ok проверки на всех fetch-запросах
+- ESLint: 0 ошибок (React 19 hooks rules, Rules of Hooks — всё исправлено)
 - Задеплоено на Vercel, домен foodcost.uz привязан
 
 ---
