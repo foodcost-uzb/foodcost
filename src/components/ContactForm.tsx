@@ -130,7 +130,7 @@ export default function ContactForm({ settings }: ContactFormProps) {
             {/* Social buttons */}
             <div className="flex gap-4 mt-8">
               <motion.a
-                href={s.contact_telegram || "https://t.me/foodcost"}
+                href={s.contact_telegram || "https://t.me/rustam_foodcost"}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => { gtagTelegramClick('contact'); fbqContact('telegram'); }}

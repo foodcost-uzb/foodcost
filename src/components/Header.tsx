@@ -76,7 +76,7 @@ export default function Header() {
               <span className="font-medium">{s.contact_phone_display || "+998 90 123 45 67"}</span>
             </a>
             <motion.a
-              href={s.contact_telegram || "https://t.me/foodcost"}
+              href={s.contact_telegram || "https://t.me/rustam_foodcost"}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => { gtagTelegramClick('header'); fbqContact('telegram'); }}
@@ -132,7 +132,7 @@ export default function Header() {
                     {s.contact_phone_display || "+998 90 123 45 67"}
                   </a>
                   <a
-                    href={s.contact_telegram || "https://t.me/foodcost"}
+                    href={s.contact_telegram || "https://t.me/rustam_foodcost"}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => { gtagTelegramClick('header_mobile'); fbqContact('telegram'); }}

@@ -50,7 +50,7 @@ export default function Footer({ settings }: FooterProps) {
             </p>
             <div className="flex gap-3">
               <motion.a
-                href={s.contact_telegram || "https://t.me/foodcost"}
+                href={s.contact_telegram || "https://t.me/rustam_foodcost"}
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}

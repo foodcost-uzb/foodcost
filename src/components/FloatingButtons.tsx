@@ -83,7 +83,7 @@ export default function FloatingButtons() {
 
         {/* Telegram */}
         <motion.a
-          href={s.contact_telegram || "https://t.me/foodcost"}
+          href={s.contact_telegram || "https://t.me/rustam_foodcost"}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => { gtagTelegramClick('floating'); fbqContact('telegram'); }}

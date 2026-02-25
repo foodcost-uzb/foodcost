@@ -89,7 +89,7 @@ const jsonLd = {
         availableLanguage: ["Russian", "Uzbek"],
       },
       sameAs: [
-        "https://t.me/foodcost",
+        "https://t.me/rustam_foodcost",
         "https://www.youtube.com/@FoodCostGroup",
       ],
     },

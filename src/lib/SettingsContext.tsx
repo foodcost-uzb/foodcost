@@ -21,7 +21,7 @@ const defaultSettings: SiteSettings = {
   contact_phone_display: "+998 90 123 45 67",
   contact_email: "info@foodcost.uz",
   contact_address: "Ташкент, Узбекистан",
-  contact_telegram: "https://t.me/foodcost",
+  contact_telegram: "https://t.me/rustam_foodcost",
   contact_youtube: "https://www.youtube.com/@FoodCostGroup",
   podcast_title: "Бизнес на цифрах",
   podcast_description: "Подкаст о финансах, учёте и управлении в ресторанном бизнесе от команды FOOD COST",
