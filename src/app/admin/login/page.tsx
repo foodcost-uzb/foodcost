@@ -57,11 +57,13 @@ export default function AdminLoginPage() {
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Логин</label>
+            <label htmlFor="login-username" className="block text-sm font-medium text-slate-300 mb-2">Логин</label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
               <input
+                id="login-username"
                 type="text"
+                autoComplete="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -72,11 +74,13 @@ export default function AdminLoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Пароль</label>
+            <label htmlFor="login-password" className="block text-sm font-medium text-slate-300 mb-2">Пароль</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
               <input
+                id="login-password"
                 type="password"
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required

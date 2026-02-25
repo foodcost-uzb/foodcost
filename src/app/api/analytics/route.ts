@@ -37,6 +37,7 @@ export async function GET(request: NextRequest) {
   const admin = await verifyAdmin();
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+  try {
   const { searchParams } = new URL(request.url);
   const days = parseInt(searchParams.get('days') || '30');
   const since = new Date();
@@ -44,22 +45,26 @@ export async function GET(request: NextRequest) {
 
   const supabase = getSupabaseAdmin();
 
+  // Fetch with increased limit (default Supabase limit is 1000) and select only needed columns
   const [pageViewsRes, eventsRes, leadsRes] = await Promise.all([
     supabase
       .from('page_views')
-      .select('*')
+      .select('page, referrer, user_agent, session_id, created_at')
       .gte('created_at', since.toISOString())
-      .order('created_at', { ascending: false }),
+      .order('created_at', { ascending: false })
+      .limit(50000),
     supabase
       .from('analytics_events')
-      .select('*')
+      .select('event_name, event_data, page, session_id, created_at')
       .gte('created_at', since.toISOString())
-      .order('created_at', { ascending: false }),
+      .order('created_at', { ascending: false })
+      .limit(50000),
     supabase
       .from('leads')
-      .select('*')
+      .select('source, status, utm_data, created_at')
       .gte('created_at', since.toISOString())
-      .order('created_at', { ascending: false }),
+      .order('created_at', { ascending: false })
+      .limit(10000),
   ]);
 
   const pageViews = pageViewsRes.data || [];
@@ -242,4 +247,7 @@ export async function GET(request: NextRequest) {
     recentEvents,
     hourlyActivity,
   });
+  } catch {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
 }

@@ -43,14 +43,21 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [analyticsRes, leadsRes] = await Promise.all([
-        fetch("/api/analytics?days=30"),
-        fetch("/api/leads?status=new"),
-      ]);
-      const analyticsData = await analyticsRes.json();
-      const leadsData = await leadsRes.json();
-      setAnalytics(analyticsData);
-      setLeads(Array.isArray(leadsData) ? leadsData.slice(0, 5) : []);
+      try {
+        const [analyticsRes, leadsRes] = await Promise.all([
+          fetch("/api/analytics?days=30"),
+          fetch("/api/leads?status=new"),
+        ]);
+        if (analyticsRes.ok) {
+          setAnalytics(await analyticsRes.json());
+        }
+        if (leadsRes.ok) {
+          const leadsData = await leadsRes.json();
+          setLeads(Array.isArray(leadsData) ? leadsData.slice(0, 5) : []);
+        }
+      } catch {
+        // Network error — leave defaults
+      }
       setLoading(false);
     };
     fetchData();

@@ -132,9 +132,14 @@ export default function AnalyticsPage() {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const res = await fetch(`/api/analytics?days=${period}`);
-      const json = await res.json();
-      setData(json);
+      try {
+        const res = await fetch(`/api/analytics?days=${period}`);
+        if (res.ok) {
+          setData(await res.json());
+        }
+      } catch {
+        // Network error — leave data as null
+      }
       setLoading(false);
     };
     fetchData();

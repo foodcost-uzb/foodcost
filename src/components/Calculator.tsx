@@ -126,10 +126,11 @@ export default function Calculator() {
 
               <div className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label htmlFor="calc-revenue" className="block text-sm font-medium text-slate-700 mb-2">
                     Месячная выручка (сум)
                   </label>
                   <input
+                    id="calc-revenue"
                     type="text"
                     inputMode="numeric"
                     value={formatNumber(revenue)}
@@ -140,11 +141,15 @@ export default function Calculator() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label htmlFor="calc-current-fc" className="block text-sm font-medium text-slate-700 mb-2">
                     Текущий Food Cost (%)
                   </label>
                   <input
+                    id="calc-current-fc"
                     type="number"
+                    min="0"
+                    max="100"
+                    step="0.1"
                     value={currentFoodCost}
                     onChange={(e) => { trackStart(); setCurrentFoodCost(e.target.value); }}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#5838a8] focus:border-transparent outline-none transition-all"
@@ -153,11 +158,15 @@ export default function Calculator() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label htmlFor="calc-target-fc" className="block text-sm font-medium text-slate-700 mb-2">
                     Целевой Food Cost (%)
                   </label>
                   <input
+                    id="calc-target-fc"
                     type="number"
+                    min="0"
+                    max="100"
+                    step="0.1"
                     value={targetFoodCost}
                     onChange={(e) => { trackStart(); setTargetFoodCost(e.target.value); }}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#5838a8] focus:border-transparent outline-none transition-all"

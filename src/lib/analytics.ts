@@ -1,13 +1,23 @@
+const SESSION_KEY = 'analytics_session';
+const SESSION_TTL = 30 * 60 * 1000; // 30 minutes
+
 let sessionId: string | null = null;
 
 function getSessionId() {
   if (sessionId) return sessionId;
   if (typeof window === 'undefined') return null;
-  sessionId = sessionStorage.getItem('analytics_session');
-  if (!sessionId) {
+
+  const stored = localStorage.getItem(SESSION_KEY);
+  const storedTime = localStorage.getItem(SESSION_KEY + '_ts');
+
+  if (stored && storedTime && Date.now() - parseInt(storedTime) < SESSION_TTL) {
+    sessionId = stored;
+  } else {
     sessionId = crypto.randomUUID();
-    sessionStorage.setItem('analytics_session', sessionId);
+    localStorage.setItem(SESSION_KEY, sessionId);
   }
+  localStorage.setItem(SESSION_KEY + '_ts', Date.now().toString());
+
   return sessionId;
 }
 

@@ -46,14 +46,22 @@ export default function LeadsPage() {
 
   const fetchLeads = async () => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (statusFilter !== "all") params.set("status", statusFilter);
-    if (sourceFilter !== "all") params.set("source", sourceFilter);
-    if (search) params.set("search", search);
+    try {
+      const params = new URLSearchParams();
+      if (statusFilter !== "all") params.set("status", statusFilter);
+      if (sourceFilter !== "all") params.set("source", sourceFilter);
+      if (search) params.set("search", search);
 
-    const res = await fetch(`/api/leads?${params}`);
-    const data = await res.json();
-    setLeads(data);
+      const res = await fetch(`/api/leads?${params}`);
+      if (res.ok) {
+        const data = await res.json();
+        setLeads(Array.isArray(data) ? data : []);
+      } else {
+        setLeads([]);
+      }
+    } catch {
+      setLeads([]);
+    }
     setLoading(false);
   };
 
