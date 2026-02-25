@@ -102,14 +102,14 @@ src/
 │   │       ├── loading.tsx      # Спиннер загрузки для роутов
 │   │       ├── content/         # CRUD: услуги, продукты, кейсы, отзывы, проекты
 │   │       ├── leads/           # Управление заявками
-│   │       ├── analytics/       # Просмотры, события, конверсия
+│   │       ├── analytics/       # Детальная аналитика: воронка, источники, устройства, UTM, часы
 │   │       └── settings/        # Настройки сайта по группам
 │   └── api/
 │       ├── auth/            # Login, logout, session check
 │       ├── content/         # CRUD: services, products, cases, testimonials, projects
 │       ├── leads/           # Приём заявок (public, с UTM + валидация) + управление (admin)
 │       ├── settings/        # Настройки сайта + калькулятора
-│       ├── analytics/       # Трекинг просмотров/событий (anon client) + агрегация
+│       ├── analytics/       # Трекинг просмотров/событий + детальная агрегация (16 метрик)
 │       └── upload/          # Загрузка изображений в Supabase Storage
 ├── components/
 │   ├── Header.tsx           # Навигация + телефон + Telegram (с GA4/Meta Pixel трекингом)
@@ -251,7 +251,7 @@ src/
 
 - **GA4**: [Google Analytics Realtime](https://analytics.google.com) + расширение [GA4 Debugger](https://chrome.google.com/webstore/detail/tag-assistant-legacy-by-g/kejbdjndbnbjgmefkgdddjlbokphdefk)
 - **Meta Pixel**: [Events Manager](https://business.facebook.com/events_manager) + расширение [Meta Pixel Helper](https://chrome.google.com/webstore/detail/meta-pixel-helper/fdgfkebogiimcoedlicjlajpkdmockpc)
-- **Supabase**: Админ-панель → Аналитика (`/admin/analytics`)
+- **Supabase**: Админ-панель → Аналитика (`/admin/analytics`) — детальный дашборд с 11 секциями
 - **JSON-LD**: [Rich Results Test](https://search.google.com/test/rich-results)
 
 ---
@@ -492,7 +492,7 @@ NEXT_PUBLIC_META_PIXEL_ID=860134220787360
 - **Meta Pixel** — трекинг конверсий для Facebook/Instagram рекламы (9 типов событий)
 - **UTM-метки** — захват, хранение, передача с лидами
 - **IntersectionObserver** — трекинг просмотра 8 секций
-- Аналитика просмотров и событий (Supabase)
+- Детальная аналитика (Supabase): KPI, динамика, воронка конверсии, устройства, источники трафика, источники заявок, активность по часам, UTM-кампании, события по категориям, последние события
 - SVG favicon с логотипом FoodCost
 - SEO: OG image, JSON-LD (8 schemas), canonical, robots.txt, sitemap.xml, verification
 - Security headers (X-Frame-Options, CSP-lite, etc.)
