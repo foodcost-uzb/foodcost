@@ -6,6 +6,8 @@ import { Menu, X, Phone, Send } from "lucide-react";
 import Link from "next/link";
 import Logo from "./Logo";
 import { useSettings } from "@/lib/SettingsContext";
+import { gtagPhoneClick, gtagTelegramClick } from "@/lib/gtag";
+import { fbqContact } from "@/lib/meta-pixel";
 
 const navLinks = [
   { href: "#services", label: "Услуги" },
@@ -67,6 +69,7 @@ export default function Header() {
           <div className="hidden lg:flex items-center gap-3">
             <a
               href={`tel:${s.contact_phone || "+998901234567"}`}
+              onClick={() => { gtagPhoneClick('header'); fbqContact('phone'); }}
               className="flex items-center gap-2 text-slate-600 hover:text-[#5838a8] transition-colors"
             >
               <Phone size={18} />
@@ -76,6 +79,7 @@ export default function Header() {
               href={s.contact_telegram || "https://t.me/foodcost"}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => { gtagTelegramClick('header'); fbqContact('telegram'); }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="flex items-center gap-2 bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white px-5 py-2.5 rounded-full font-medium shadow-lg shadow-[#5838a8]/20 hover:shadow-xl hover:shadow-[#5838a8]/30 transition-shadow"
@@ -121,6 +125,7 @@ export default function Header() {
                 <div className="flex flex-col gap-3 pt-4 mt-2 border-t border-[#5838a8]/10">
                   <a
                     href={`tel:${s.contact_phone || "+998901234567"}`}
+                    onClick={() => { gtagPhoneClick('header_mobile'); fbqContact('phone'); }}
                     className="flex items-center gap-2 text-slate-600 py-2"
                   >
                     <Phone size={18} />
@@ -130,6 +135,7 @@ export default function Header() {
                     href={s.contact_telegram || "https://t.me/foodcost"}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => { gtagTelegramClick('header_mobile'); fbqContact('telegram'); }}
                     className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white px-4 py-3.5 rounded-full font-medium shadow-lg"
                   >
                     <Send size={18} />

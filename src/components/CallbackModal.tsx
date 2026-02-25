@@ -3,6 +3,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { X, Phone, Loader2, CheckCircle } from "lucide-react";
+import { gtagFormSubmit } from "@/lib/gtag";
+import { fbqLead, fbqSchedule } from "@/lib/meta-pixel";
+import { getUtmData } from "@/lib/utm";
 
 interface CallbackModalProps {
   isOpen: boolean;
@@ -34,13 +37,16 @@ export default function CallbackModal({ isOpen, onClose }: CallbackModalProps) {
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, phone, source: "callback" }),
+        body: JSON.stringify({ name, phone, source: "callback", utm: getUtmData() }),
       });
 
       if (!res.ok) {
         throw new Error("Request failed");
       }
 
+      gtagFormSubmit('callback_modal');
+      fbqLead('callback');
+      fbqSchedule();
       setIsSubmitted(true);
       setTimeout(() => {
         setIsSubmitted(false);

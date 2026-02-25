@@ -14,6 +14,8 @@ import {
   X,
   type LucideIcon
 } from "lucide-react";
+import { gtagServiceView, gtagCtaClick } from "@/lib/gtag";
+import { fbqViewContent, fbqCtaClick } from "@/lib/meta-pixel";
 
 const iconMap: Record<string, LucideIcon> = {
   ClipboardCheck,
@@ -101,7 +103,7 @@ export default function Services({ services: servicesProp }: ServicesProps) {
 
               <a
                 href="#contact"
-                onClick={() => setSelectedService(null)}
+                onClick={() => { gtagCtaClick('service_enquiry', 'service_modal'); fbqCtaClick('service_enquiry'); setSelectedService(null); }}
                 className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white py-4 rounded-xl font-semibold shadow-lg shadow-[#5838a8]/30 hover:shadow-xl transition-shadow"
               >
                 Оставить заявку <ArrowRight size={18} />
@@ -173,7 +175,7 @@ export default function Services({ services: servicesProp }: ServicesProps) {
 
               {/* CTA */}
               <button
-                onClick={() => setSelectedService(service)}
+                onClick={() => { gtagServiceView(service.title); fbqViewContent(service.title, 'service'); setSelectedService(service); }}
                 className="inline-flex items-center gap-2 text-[#5838a8] font-medium group-hover:gap-3 transition-all"
               >
                 Подробнее <ArrowRight size={16} />

@@ -1,13 +1,17 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Calculator as CalcIcon, TrendingDown, DollarSign, Percent } from "lucide-react";
+import { gtagCalculatorStarted, gtagCalculatorCompleted, gtagCtaClick } from "@/lib/gtag";
+import { fbqCalculatorStarted, fbqCalculatorCompleted, fbqCtaClick } from "@/lib/meta-pixel";
 
 export default function Calculator() {
   const [revenue, setRevenue] = useState<string>("");
   const [currentFoodCost, setCurrentFoodCost] = useState<string>("");
   const [targetFoodCost, setTargetFoodCost] = useState<string>("");
+  const hasStarted = useRef(false);
+  const hasCompleted = useRef(false);
 
   // Format number with space separators: 100000000 → 100 000 000
   const formatNumber = (value: string) => {
@@ -15,7 +19,16 @@ export default function Calculator() {
     return digits.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   };
 
+  const trackStart = () => {
+    if (!hasStarted.current) {
+      hasStarted.current = true;
+      gtagCalculatorStarted();
+      fbqCalculatorStarted();
+    }
+  };
+
   const handleRevenueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    trackStart();
     const raw = e.target.value.replace(/\s/g, "");
     if (raw === "" || /^\d+$/.test(raw)) {
       setRevenue(raw);
@@ -46,8 +59,16 @@ export default function Calculator() {
 
   const savings = calculateSavings();
 
+  useEffect(() => {
+    if (savings && !hasCompleted.current) {
+      hasCompleted.current = true;
+      gtagCalculatorCompleted({ revenue, currentFc: currentFoodCost, targetFc: targetFoodCost, savings: savings.monthlySavings });
+      fbqCalculatorCompleted({ revenue, savings: savings.monthlySavings });
+    }
+  }, [savings, revenue, currentFoodCost, targetFoodCost]);
+
   return (
-    <section className="py-24 bg-gradient-to-br from-[#5838a8] via-[#7c5cc9] to-[#c04880] relative overflow-hidden">
+    <section id="calculator" className="py-24 bg-gradient-to-br from-[#5838a8] via-[#7c5cc9] to-[#c04880] relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,white_2px,transparent_2px)] bg-[size:40px_40px]" />
@@ -125,7 +146,7 @@ export default function Calculator() {
                   <input
                     type="number"
                     value={currentFoodCost}
-                    onChange={(e) => setCurrentFoodCost(e.target.value)}
+                    onChange={(e) => { trackStart(); setCurrentFoodCost(e.target.value); }}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#5838a8] focus:border-transparent outline-none transition-all"
                     placeholder="35"
                   />
@@ -138,7 +159,7 @@ export default function Calculator() {
                   <input
                     type="number"
                     value={targetFoodCost}
-                    onChange={(e) => setTargetFoodCost(e.target.value)}
+                    onChange={(e) => { trackStart(); setTargetFoodCost(e.target.value); }}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#5838a8] focus:border-transparent outline-none transition-all"
                     placeholder="28"
                   />
@@ -189,6 +210,7 @@ export default function Calculator() {
 
               <motion.a
                 href="#contact"
+                onClick={() => { gtagCtaClick('get_consultation', 'calculator'); fbqCtaClick('get_consultation'); }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="mt-6 w-full bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white py-4 rounded-xl font-semibold text-lg shadow-lg shadow-[#5838a8]/30 hover:shadow-xl transition-shadow flex items-center justify-center gap-2"

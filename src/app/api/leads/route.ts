@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { name, phone, email, message, source } = body;
+  const { name, phone, email, message, source, utm } = body;
 
   if (!name || !phone) {
     return NextResponse.json({ error: 'Name and phone are required' }, { status: 400 });
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from('leads')
-    .insert({ name, phone, email: email || null, message: message || null, source: safeSource })
+    .insert({ name, phone, email: email || null, message: message || null, source: safeSource, utm_data: utm || null })
     .select()
     .single();
 

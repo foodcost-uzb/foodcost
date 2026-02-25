@@ -5,6 +5,8 @@ import { Send, Phone, ArrowUp, PhoneCall } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useSettings } from "@/lib/SettingsContext";
 import CallbackModal from "./CallbackModal";
+import { gtagCtaClick, gtagPhoneClick, gtagTelegramClick } from "@/lib/gtag";
+import { fbqCtaClick, fbqContact } from "@/lib/meta-pixel";
 
 const wobble = {
   animate: {
@@ -54,7 +56,7 @@ export default function FloatingButtons() {
 
         {/* Callback */}
         <motion.button
-          onClick={() => setIsCallbackOpen(true)}
+          onClick={() => { gtagCtaClick('callback_button', 'floating'); fbqCtaClick('callback_button'); setIsCallbackOpen(true); }}
           variants={wobble}
           animate="animate"
           whileHover={{ scale: 1.1 }}
@@ -68,6 +70,7 @@ export default function FloatingButtons() {
         {/* Phone */}
         <motion.a
           href={`tel:${s.contact_phone || "+998901234567"}`}
+          onClick={() => { gtagPhoneClick('floating'); fbqContact('phone'); }}
           variants={wobble}
           animate="animate"
           whileHover={{ scale: 1.1 }}
@@ -83,6 +86,7 @@ export default function FloatingButtons() {
           href={s.contact_telegram || "https://t.me/foodcost"}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => { gtagTelegramClick('floating'); fbqContact('telegram'); }}
           variants={wobble}
           animate="animate"
           whileHover={{ scale: 1.1 }}

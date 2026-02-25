@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight, Users, Award, Zap } from "lucide-react";
+import { gtagCtaClick } from "@/lib/gtag";
+import { fbqCtaClick } from "@/lib/meta-pixel";
 
 interface HeroProps {
   settings?: Record<string, string>;
@@ -66,6 +68,7 @@ export default function Hero({ settings }: HeroProps) {
           >
             <motion.a
               href="#contact"
+              onClick={() => { gtagCtaClick('get_consultation', 'hero'); fbqCtaClick('get_consultation'); }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="group flex items-center gap-2 bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white px-8 py-4 rounded-full font-semibold text-lg shadow-xl shadow-[#5838a8]/30 hover:shadow-2xl hover:shadow-[#5838a8]/40 transition-all"
@@ -75,6 +78,7 @@ export default function Hero({ settings }: HeroProps) {
             </motion.a>
             <motion.a
               href="#services"
+              onClick={() => gtagCtaClick('learn_more', 'hero')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="flex items-center gap-2 bg-white text-slate-700 px-8 py-4 rounded-full font-semibold text-lg border-2 border-[#5838a8]/20 hover:border-[#5838a8]/40 hover:bg-[#f8f7fc] transition-all"

@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import { Play, Youtube, Bell, Headphones } from "lucide-react";
+import { gtagVideoView, gtagCtaClick } from "@/lib/gtag";
+import { fbqVideoView } from "@/lib/meta-pixel";
 
 interface PodcastProps {
   settings?: Record<string, string>;
@@ -64,6 +66,7 @@ export default function Podcast({ settings }: PodcastProps) {
                 href={s.podcast_youtube_url || "https://www.youtube.com/@FoodCostGroup"}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => { gtagVideoView('podcast'); fbqVideoView('podcast'); }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-red-700 transition-colors"
@@ -75,6 +78,7 @@ export default function Podcast({ settings }: PodcastProps) {
                 href={`${s.podcast_youtube_url || "https://www.youtube.com/@FoodCostGroup"}?sub_confirmation=1`}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => gtagCtaClick('podcast_subscribe', 'podcast')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-full font-semibold hover:bg-white/20 transition-colors border border-white/20"

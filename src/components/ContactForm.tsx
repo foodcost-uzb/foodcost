@@ -3,6 +3,10 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Send, Phone, Mail, MapPin, Loader2 } from "lucide-react";
+import { gtagFormSubmit, gtagPhoneClick, gtagTelegramClick } from "@/lib/gtag";
+import { fbqLead, fbqContact } from "@/lib/meta-pixel";
+import { trackEvent } from "@/lib/analytics";
+import { getUtmData } from "@/lib/utm";
 
 interface ContactFormProps {
   settings?: Record<string, string>;
@@ -29,13 +33,16 @@ export default function ContactForm({ settings }: ContactFormProps) {
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, source: "form" }),
+        body: JSON.stringify({ ...formData, source: "form", utm: getUtmData() }),
       });
 
       if (!res.ok) {
         throw new Error("Request failed");
       }
 
+      gtagFormSubmit('contact_form');
+      fbqLead('contact_form');
+      trackEvent('form_submit', { form: 'contact_form' });
       setIsSubmitted(true);
       setFormData({ name: "", phone: "", email: "", message: "" });
       setTimeout(() => setIsSubmitted(false), 5000);
@@ -79,6 +86,7 @@ export default function ContactForm({ settings }: ContactFormProps) {
             <div className="space-y-4">
               <motion.a
                 href={`tel:${s.contact_phone || "+998901234567"}`}
+                onClick={() => { gtagPhoneClick('contact'); fbqContact('phone'); }}
                 whileHover={{ scale: 1.02 }}
                 className="flex items-center gap-4 bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-[#5838a8]/10 hover:border-[#5838a8]/20"
               >
@@ -125,6 +133,7 @@ export default function ContactForm({ settings }: ContactFormProps) {
                 href={s.contact_telegram || "https://t.me/foodcost"}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => { gtagTelegramClick('contact'); fbqContact('telegram'); }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-full font-medium hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/20"

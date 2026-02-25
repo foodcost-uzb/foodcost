@@ -3,6 +3,8 @@
 import { motion } from "framer-motion";
 import { Star, Quote, Play, Youtube } from "lucide-react";
 import { useState } from "react";
+import { gtagVideoView } from "@/lib/gtag";
+import { fbqVideoView } from "@/lib/meta-pixel";
 
 interface TestimonialData {
   id: string;
@@ -95,7 +97,7 @@ export default function Testimonials({ testimonials: testimonialsProp }: Testimo
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="group relative rounded-2xl overflow-hidden cursor-pointer"
-                  onClick={() => setActiveVideo(video)}
+                  onClick={() => { gtagVideoView(video.video_title || 'testimonial', video.video_id || undefined); fbqVideoView(video.video_title || 'testimonial'); setActiveVideo(video); }}
                 >
                   {/* Thumbnail */}
                   <div className={`relative ${video.role === 'short' ? 'aspect-[3/4]' : 'aspect-video'}`}>

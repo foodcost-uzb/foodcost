@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, ArrowRight, Sparkles, Zap, Crown, X, type LucideIcon } from "lucide-react";
+import { gtagProductView } from "@/lib/gtag";
+import { fbqViewContent } from "@/lib/meta-pixel";
 
 const iconMap: Record<string, LucideIcon> = { Zap, Sparkles, Crown };
 
@@ -208,7 +210,7 @@ export default function Products({ products: productsProp }: ProductsProps) {
               <motion.button
                 whileHover={!product.badge ? { scale: 1.02 } : undefined}
                 whileTap={!product.badge ? { scale: 0.98 } : undefined}
-                onClick={() => !product.badge && setSelectedProduct(product)}
+                onClick={() => { if (!product.badge) { gtagProductView(product.name); fbqViewContent(product.name, 'product'); setSelectedProduct(product); } }}
                 disabled={!!product.badge}
                 className={`w-full flex items-center justify-center gap-2 py-4 rounded-xl font-semibold transition-all ${
                   product.is_popular

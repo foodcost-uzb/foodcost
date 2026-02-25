@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TrendingUp, TrendingDown, ArrowUpRight, X, ArrowRight } from "lucide-react";
+import { gtagCaseStudyView, gtagCtaClick } from "@/lib/gtag";
+import { fbqViewContent, fbqCtaClick } from "@/lib/meta-pixel";
 
 interface CaseResult {
   label: string;
@@ -99,7 +101,7 @@ export default function Cases({ cases: casesProp }: CasesProps) {
 
               <a
                 href="#contact"
-                onClick={() => setSelectedCase(null)}
+                onClick={() => { gtagCtaClick('want_same_result', 'case_modal'); fbqCtaClick('want_same_result'); setSelectedCase(null); }}
                 className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#5838a8] to-[#c04880] text-white py-4 rounded-xl font-semibold shadow-lg shadow-[#5838a8]/30 hover:shadow-xl transition-shadow"
               >
                 Хочу такой же результат <ArrowRight size={18} />
@@ -186,7 +188,7 @@ export default function Cases({ cases: casesProp }: CasesProps) {
 
                 {/* CTA */}
                 <button
-                  onClick={() => setSelectedCase(item)}
+                  onClick={() => { gtagCaseStudyView(item.title); fbqViewContent(item.title, 'case_study'); setSelectedCase(item); }}
                   className="mt-6 flex items-center gap-2 text-[#5838a8] font-medium group-hover:gap-3 transition-all"
                 >
                   Подробнее о проекте
