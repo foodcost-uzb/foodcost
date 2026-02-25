@@ -1,6 +1,6 @@
 # FOOD COST — Handoff документация
 
-**Дата обновления:** 10 февраля 2026
+**Дата обновления:** 25 февраля 2026
 
 ---
 
@@ -14,7 +14,7 @@
 | **Vercel URL** | https://foodcost-three.vercel.app |
 | **GitHub** | https://github.com/foodcost-uzb/foodcost |
 | **Админ-панель** | https://foodcost.uz/admin/login |
-| **Админ логин** | admin / (пароль изменён, не дефолтный) |
+| **Админ логин** | admin / admin123 |
 
 ---
 
@@ -42,6 +42,8 @@
 | **Supabase** | База данных + Storage | Проект `eiulmeuhwlfkowwtenli`, регион `eu-central-1` |
 | **GitHub** | Репозиторий | `foodcost-uzb/foodcost` |
 | **Tomas.uz** | DNS | NS: `ns1.tomas.uz` |
+| **Google Analytics 4** | Аналитика | Measurement ID: `G-NQRE4NRJ4H` |
+| **Meta Pixel** | Facebook-аналитика | Pixel ID: `860134220787360` |
 
 ### DNS-записи для foodcost.uz
 
@@ -55,12 +57,25 @@
 ## Переменные окружения
 
 ```
+# Supabase
 NEXT_PUBLIC_SUPABASE_URL=https://eiulmeuhwlfkowwtenli.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
 SUPABASE_SERVICE_ROLE_KEY=<service role key>
+
+# Auth
 JWT_SECRET=<random 48+ chars>
+
+# Telegram notifications
 TELEGRAM_BOT_TOKEN=<bot token from @BotFather>
 TELEGRAM_CHAT_ID=<chat id for notifications>
+
+# Analytics
+NEXT_PUBLIC_GA4_ID=G-NQRE4NRJ4H
+NEXT_PUBLIC_META_PIXEL_ID=860134220787360
+
+# Site verification (optional)
+NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=
+NEXT_PUBLIC_FB_DOMAIN_VERIFICATION=
 ```
 
 Настроены в Vercel (production) и в `.env.local` (локально).
@@ -73,7 +88,7 @@ TELEGRAM_CHAT_ID=<chat id for notifications>
 src/
 ├── app/
 │   ├── globals.css          # Глобальные стили, CSS-переменные
-│   ├── layout.tsx           # Корневой layout с метаданными, JSON-LD, skip-to-content
+│   ├── layout.tsx           # Корневой layout с метаданными, JSON-LD, skip-to-content, аналитика
 │   ├── page.tsx             # Главная (ISR revalidate=60, server component → Supabase)
 │   ├── not-found.tsx        # Кастомная 404 страница
 │   ├── error.tsx            # Error boundary с кнопкой retry
@@ -92,27 +107,28 @@ src/
 │   └── api/
 │       ├── auth/            # Login, logout, session check
 │       ├── content/         # CRUD: services, products, cases, testimonials, projects
-│       ├── leads/           # Приём заявок (public, с валидацией) + управление (admin)
+│       ├── leads/           # Приём заявок (public, с UTM + валидация) + управление (admin)
 │       ├── settings/        # Настройки сайта + калькулятора
 │       ├── analytics/       # Трекинг просмотров/событий (anon client) + агрегация
 │       └── upload/          # Загрузка изображений в Supabase Storage
 ├── components/
-│   ├── Header.tsx           # Навигация + телефон + Telegram (aria-label на burger)
-│   ├── Hero.tsx             # Hero-секция (props из настроек)
-│   ├── Services.tsx         # Bento-grid услуг + модальные окна
-│   ├── Products.tsx         # Тарифы + модальные окна
+│   ├── Header.tsx           # Навигация + телефон + Telegram (с GA4/Meta Pixel трекингом)
+│   ├── Hero.tsx             # Hero-секция (CTA трекинг)
+│   ├── Services.tsx         # Bento-grid услуг + модальные окна (service_view трекинг)
+│   ├── Products.tsx         # Тарифы + модальные окна (product_view трекинг)
 │   ├── About.tsx            # О компании (props из настроек)
-│   ├── Cases.tsx            # Кейсы + модальные окна (lazy loading images)
+│   ├── Cases.tsx            # Кейсы + модальные окна (case_study_view трекинг)
 │   ├── ProjectLogos.tsx     # Бегущая строка логотипов проектов (marquee)
-│   ├── Calculator.tsx       # Интерактивный калькулятор food cost (валидация target < current)
-│   ├── Testimonials.tsx     # Отзывы: текст + видео (lazy loading)
-│   ├── Podcast.tsx          # Подкаст (YouTube embed)
-│   ├── ContactForm.tsx      # Форма → POST /api/leads (показывает ошибку при сбое)
-│   ├── CallbackModal.tsx    # Модалка обратного звонка (scroll lock, ошибки, aria-label)
+│   ├── Calculator.tsx       # Интерактивный калькулятор (calculator_started/completed трекинг)
+│   ├── Testimonials.tsx     # Отзывы: текст + видео (video_view трекинг)
+│   ├── Podcast.tsx          # Подкаст (YouTube embed, video_view трекинг)
+│   ├── ContactForm.tsx      # Форма → POST /api/leads (form_submit + UTM трекинг)
+│   ├── CallbackModal.tsx    # Модалка обратного звонка (form_submit + schedule + UTM)
 │   ├── Footer.tsx           # Подвал (контакты, соцсети)
-│   ├── FloatingButtons.tsx  # Плавающие кнопки: звонок, телефон, Telegram (aria-labels)
+│   ├── FloatingButtons.tsx  # Плавающие кнопки (phone/telegram/callback трекинг)
 │   ├── Logo.tsx             # Лого (priority только для header, lazy для footer)
-│   ├── AnalyticsTracker.tsx # Автотрекинг просмотров
+│   ├── AnalyticsTracker.tsx # Автотрекинг просмотров + IntersectionObserver секций
+│   ├── ThirdPartyScripts.tsx # GA4 + Meta Pixel загрузчик (afterInteractive)
 │   └── admin/
 │       ├── AdminSidebar.tsx # Боковая навигация админки
 │       ├── AdminHeader.tsx  # Шапка админки с breadcrumbs
@@ -121,7 +137,10 @@ src/
 │   ├── utils.ts             # Утилиты (cn для classnames)
 │   ├── auth.ts              # JWT: verify, hash, cookies
 │   ├── data.ts              # Серверные функции загрузки данных
-│   ├── analytics.ts         # Клиентский trackPageView/trackEvent
+│   ├── analytics.ts         # Клиентский trackPageView/trackEvent (Supabase)
+│   ├── gtag.ts              # Google Analytics 4 — все функции трекинга
+│   ├── meta-pixel.ts        # Meta Pixel (Facebook) — все функции трекинга
+│   ├── utm.ts               # UTM-метки: capture из URL + persist в storage
 │   ├── SettingsContext.tsx   # React Context для настроек сайта
 │   └── supabase/
 │       ├── client.ts        # Браузерный Supabase-клиент
@@ -129,7 +148,8 @@ src/
 │       └── types.ts         # TypeScript-типы для 11 таблиц
 └── scripts/
     ├── schema.sql           # Схема БД (11 таблиц + RLS + индексы)
-    └── seed.sql             # Начальные данные
+    ├── seed.sql             # Начальные данные
+    └── migration-add-utm.sql # Миграция: utm_data колонка в leads
 ```
 
 ---
@@ -146,7 +166,7 @@ src/
 | `cases` | Кейсы | 8 (active) |
 | `testimonials` | Отзывы (текст + видео, YouTube Shorts) | 3 |
 | `project_logos` | Логотипы проектов (marquee) | 35 |
-| `leads` | Заявки с сайта | динамически |
+| `leads` | Заявки с сайта (+ `utm_data` jsonb) | динамически |
 | `site_settings` | Настройки сайта | 31 |
 | `calculator_settings` | Настройки калькулятора | 1 |
 | `page_views` | Просмотры страниц | динамически |
@@ -174,7 +194,65 @@ src/
 
 - **Логин:** username + password → bcrypt → JWT в httpOnly cookie (`admin_session`, 24h)
 - **Защита:** `verifyAdmin()` в protected layout и API routes
-- **Пароль изменён** с дефолтного (seed) на пользовательский
+- **Текущие данные:** admin / admin123
+
+---
+
+## Аналитика и трекинг
+
+### Три уровня аналитики
+
+| Система | Назначение | Статус |
+|---------|------------|--------|
+| **Supabase (внутренняя)** | Просмотры, события, лиды, UTM | ✅ Работает |
+| **Google Analytics 4** | Внешняя аналитика, воронка, аудитория | ✅ `G-NQRE4NRJ4H` |
+| **Meta Pixel** | Facebook/Instagram реклама, конверсии | ✅ `860134220787360` |
+
+### Файлы аналитики
+
+| Файл | Назначение |
+|------|------------|
+| `src/lib/gtag.ts` | GA4: 14 функций трекинга (pageview, form_submit, phone_click, telegram_click, calculator_started/completed, case_study_view, video_view, cta_click, section_view, service_view, product_view) |
+| `src/lib/meta-pixel.ts` | Meta Pixel: 9 функций (PageView, Lead, Contact, ViewContent, Schedule, CalculatorStarted/Completed, VideoView, CtaClick) |
+| `src/lib/utm.ts` | Захват UTM-меток из URL → sessionStorage + localStorage |
+| `src/lib/analytics.ts` | Внутренний трекинг → Supabase (page_views, analytics_events) |
+| `src/components/ThirdPartyScripts.tsx` | Загрузчик GA4 + Meta Pixel скриптов (afterInteractive), UTM capture |
+| `src/components/AnalyticsTracker.tsx` | Трекинг просмотров + IntersectionObserver для 8 секций |
+
+### Трекинг конверсий по компонентам
+
+| Компонент | События GA4 | События Meta Pixel |
+|-----------|-------------|-------------------|
+| **ContactForm** | `form_submit`, `phone_click`, `telegram_click` | `Lead`, `Contact` |
+| **CallbackModal** | `form_submit` | `Lead`, `Schedule` |
+| **FloatingButtons** | `cta_click`, `phone_click`, `telegram_click` | `CtaClick`, `Contact` |
+| **Calculator** | `calculator_started`, `calculator_completed`, `cta_click` | `CalculatorStarted`, `CalculatorCompleted`, `CtaClick` |
+| **Cases** | `case_study_view`, `cta_click` | `ViewContent`, `CtaClick` |
+| **Testimonials** | `video_view` | `VideoView` |
+| **Header** | `phone_click`, `telegram_click` | `Contact` |
+| **Hero** | `cta_click` (get_consultation, learn_more) | `CtaClick` |
+| **Podcast** | `video_view`, `cta_click` (podcast_subscribe) | `VideoView` |
+| **Services** | `service_view`, `cta_click` (service_enquiry) | `ViewContent`, `CtaClick` |
+| **Products** | `product_view` | `ViewContent` |
+
+### IntersectionObserver (секции)
+
+При прокрутке страницы отслеживаются 8 секций (threshold 0.3, каждая один раз за сессию):
+`services`, `products`, `about`, `podcast`, `cases`, `calculator`, `testimonials`, `contact`
+
+### UTM-метки
+
+- При загрузке страницы `captureUtmParams()` извлекает `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content` из URL
+- Данные сохраняются в sessionStorage + localStorage
+- При отправке форм (ContactForm, CallbackModal) UTM передаётся в API и сохраняется в колонке `leads.utm_data` (jsonb)
+- Пример URL: `https://foodcost.uz?utm_source=google&utm_medium=cpc&utm_campaign=spring2026`
+
+### Проверка аналитики
+
+- **GA4**: [Google Analytics Realtime](https://analytics.google.com) + расширение [GA4 Debugger](https://chrome.google.com/webstore/detail/tag-assistant-legacy-by-g/kejbdjndbnbjgmefkgdddjlbokphdefk)
+- **Meta Pixel**: [Events Manager](https://business.facebook.com/events_manager) + расширение [Meta Pixel Helper](https://chrome.google.com/webstore/detail/meta-pixel-helper/fdgfkebogiimcoedlicjlajpkdmockpc)
+- **Supabase**: Админ-панель → Аналитика (`/admin/analytics`)
+- **JSON-LD**: [Rich Results Test](https://search.google.com/test/rich-results)
 
 ---
 
@@ -186,11 +264,12 @@ src/
 | **Canonical URL** | `alternates.canonical` в layout.tsx |
 | **OG Image** | `opengraph-image.tsx` (edge runtime, 1200x630, брендовые цвета) |
 | **Twitter Card** | `summary_large_image` |
-| **JSON-LD** | Organization + LocalBusiness Schema.org в `<head>` |
+| **JSON-LD** | Organization, LocalBusiness, WebSite, WebPage, Service (OfferCatalog), Product ×2 (с ценами), BreadcrumbList |
 | **Apple Touch Icon** | `/logo-icon.svg` |
 | **robots.txt** | `Disallow: /admin/`, `Sitemap: .../sitemap.xml` |
 | **sitemap.xml** | Только главная страница (SPA с hash-секциями) |
 | **Skip-to-content** | `<a href="#main-content">` (sr-only) |
+| **Verification** | Google Search Console + Facebook domain verification (через env vars) |
 
 ---
 
@@ -279,6 +358,7 @@ npx vercel --prod
 | **Lazy loading** | Все изображения ниже фолда: `loading="lazy"` |
 | **Image priority** | Только header-лого (`Logo` horizontal variant) |
 | **Static pages** | robots.txt, sitemap.xml, 404, admin/login — статические |
+| **Analytics scripts** | `strategy="afterInteractive"` — не блокируют рендер |
 
 ---
 
@@ -360,6 +440,7 @@ npx vercel --prod
 - `type="text" inputMode="numeric"` для мобильной клавиатуры
 - `formatNumber()` добавляет пробелы как разделители тысяч
 - Валидация: целевой food cost должен быть ниже текущего (иначе подсказка)
+- Трекинг: `calculator_started` при первом взаимодействии, `calculator_completed` при расчёте
 
 ---
 
@@ -374,6 +455,12 @@ git add . && git commit -m "описание" && git push
 
 # Или ручной деплой:
 npx vercel --prod
+```
+
+**Важно:** После подключения аналитики нужно добавить env vars в Vercel:
+```
+NEXT_PUBLIC_GA4_ID=G-NQRE4NRJ4H
+NEXT_PUBLIC_META_PIXEL_ID=860134220787360
 ```
 
 Главная страница использует ISR (`revalidate = 60`) — данные из Supabase обновляются раз в минуту.
@@ -399,11 +486,15 @@ npx vercel --prod
 - Видео-отзывы с поддержкой YouTube Shorts
 - Цены на карточках продуктов (пакетов)
 - Калькулятор с форматированием чисел и валидацией
-- Формы заявок → Supabase leads (с показом ошибок)
+- Формы заявок → Supabase leads (с показом ошибок + UTM-метки)
 - Telegram-уведомления о новых заявках (с экранированием HTML)
-- Аналитика просмотров и событий
+- **Google Analytics 4** — полный трекинг конверсий (14 типов событий)
+- **Meta Pixel** — трекинг конверсий для Facebook/Instagram рекламы (9 типов событий)
+- **UTM-метки** — захват, хранение, передача с лидами
+- **IntersectionObserver** — трекинг просмотра 8 секций
+- Аналитика просмотров и событий (Supabase)
 - SVG favicon с логотипом FoodCost
-- SEO: OG image, JSON-LD, canonical, robots.txt, sitemap.xml
+- SEO: OG image, JSON-LD (8 schemas), canonical, robots.txt, sitemap.xml, verification
 - Security headers (X-Frame-Options, CSP-lite, etc.)
 - Accessibility: skip-to-content, aria-labels, form labels, scroll lock
 - Error boundary, кастомная 404, loading states
@@ -412,4 +503,4 @@ npx vercel --prod
 
 ---
 
-*Обновлено: 10 февраля 2026*
+*Обновлено: 25 февраля 2026*
